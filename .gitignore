@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Local deployment and developer credentials
+.vercel/
+.env
+.env.*
+!.env.example

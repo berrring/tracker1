@@ -391,4 +391,179 @@ class AppLocalizationsKy extends AppLocalizations {
 
   @override
   String get noDelivery => 'Нет данных, подтверждающих доставку сигнала.';
+
+  @override
+  String get hardwareTitle => 'Физический трекер';
+
+  @override
+  String get hardwareIntro =>
+      'Стендовая настройка по USB. Карта и события семьи остаются демонстрационными.';
+
+  @override
+  String get hardwareOpen => 'Настройка по USB';
+
+  @override
+  String get hardwareConnect => 'Выбрать USB-порт';
+
+  @override
+  String get hardwareDisconnect => 'Отключить USB';
+
+  @override
+  String get hardwareDisconnected => 'USB не подключён';
+
+  @override
+  String get hardwareConnected => 'USB подключён';
+
+  @override
+  String get hardwareUnsupported =>
+      'Выбор USB недоступен. Используйте Chrome или Edge на компьютере либо локальную утилиту из HARDWARE_SETUP.md.';
+
+  @override
+  String get hardwareSteps =>
+      'Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3. При запросе нажмите BOOT на плате в течение 20 секунд.';
+
+  @override
+  String get hardwareBoard => 'Модель платы';
+
+  @override
+  String get hardwareName => 'Имя устройства';
+
+  @override
+  String get hardwarePhone => 'Номер для тестового SOS';
+
+  @override
+  String get hardwarePhoneHint =>
+      'Международный формат. Введите +, код страны и номер без пробелов.';
+
+  @override
+  String get hardwareNameInvalid =>
+      'Введите имя до 48 байт без вертикальной черты.';
+
+  @override
+  String get hardwarePhoneInvalid =>
+      'Введите + и 8–15 цифр. Первая цифра не может быть 0.';
+
+  @override
+  String get hardwareSave => 'Проверить и записать контакт';
+
+  @override
+  String get hardwareConfirm => 'Подтвердить контакт';
+
+  @override
+  String get hardwareConsent =>
+      'Владелец номера согласен получать тестовые SMS.';
+
+  @override
+  String get hardwarePrivate =>
+      'Номер записывается на подключённую плату. Страница не сохраняет его в браузере.';
+
+  @override
+  String get hardwareDiagnostics => 'Проверить модем и GNSS';
+
+  @override
+  String get hardwareConfig => 'Контакт на плате';
+
+  @override
+  String get hardwareConfigured => 'Сохранён';
+
+  @override
+  String get hardwareUnconfigured => 'Не настроен';
+
+  @override
+  String get hardwareModem => 'Ответ модема';
+
+  @override
+  String get hardwareGnss => 'Статус GNSS';
+
+  @override
+  String get hardwareUnavailable => 'Недоступно';
+
+  @override
+  String get hardwareNotChecked => 'Не проверено';
+
+  @override
+  String get hardwareReady => 'Отвечает';
+
+  @override
+  String get hardwareRegistered => 'Модем зарегистрирован';
+
+  @override
+  String get hardwareNotRegistered => 'Регистрация не подтверждена';
+
+  @override
+  String get hardwareFix => 'Есть фиксация';
+
+  @override
+  String get hardwareNoFix => 'Нет фиксации';
+
+  @override
+  String get hardwareLocked =>
+      'Стендовый профиль выключен. Сверьте ревизию платы перед включением GPIO.';
+
+  @override
+  String get hardwarePending =>
+      'Ожидание подтверждения на плате. Нажмите BOOT для выбранного действия.';
+
+  @override
+  String get hardwareBusy => 'Выполняется проверка USB или диагностика.';
+
+  @override
+  String get hardwareTest => 'Отправить тестовое SMS';
+
+  @override
+  String get hardwareTestTitle => 'Подтвердить тестовое SMS';
+
+  @override
+  String get hardwareTestCopy =>
+      'Плата отправит на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату. Для отправки нажмите BOOT.';
+
+  @override
+  String get hardwareClear => 'Удалить контакт с платы';
+
+  @override
+  String get hardwareClearCopy =>
+      'Номер будет удалён с платы после нажатия BOOT.';
+
+  @override
+  String get hardwareCleared => 'Контакт удалён с платы.';
+
+  @override
+  String get hardwareAccepted =>
+      'Модем принял тестовое SMS. Доставка получателю не подтверждена.';
+
+  @override
+  String get hardwareUnknownSms =>
+      'Нет итогового ответа модема. Статус отправки и доставки неизвестен.';
+
+  @override
+  String get hardwareRejected => 'Модем отклонил тестовое SMS.';
+
+  @override
+  String get hardwareNoNetwork =>
+      'Регистрация в сети не подтверждена. SMS не отправлялось.';
+
+  @override
+  String get hardwareTimeout =>
+      'Время ожидания истекло. Проверьте порт или повторите подтверждение на плате.';
+
+  @override
+  String get hardwareWrong =>
+      'Устройство не ответило протоколом SafeTrack. Проверьте порт и прошивку.';
+
+  @override
+  String get hardwarePortError =>
+      'Сбой обмена по USB. Проверьте кабель и закройте монитор порта.';
+
+  @override
+  String get hardwareStorage => 'Плата не подтвердила запись в память.';
+
+  @override
+  String get hardwareNoModem =>
+      'Модем не ответил. Проверьте питание и переключатели.';
+
+  @override
+  String get hardwareSelectionCancelled => 'Выбор USB-порта отменён.';
+
+  @override
+  String get notifyDetailWeb => 'Настройки сохраняются в этом браузере.';
 }

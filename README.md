@@ -16,7 +16,7 @@ Select the Android target when prompted. To run iOS, use macOS with Xcode and an
 
 To build a debug APK for an ARM64 Android device, run `flutter build apk --debug --target-platform android-arm64`. On macOS, `flutter build ios --no-codesign` checks the iOS build without code signing.
 
-For a browser demo, run `flutter run -d chrome`. To create a static build with local renderer assets, run `flutter build web --no-web-resources-cdn` and serve `build/web` over localhost.
+For a browser demo, run `flutter run -d chrome`. The production bundle in `public/` can be imported from GitHub into Vercel without installing Flutter there. See [DEPLOYMENT.md](DEPLOYMENT.md) for the iPhone import settings.
 
 ## Demonstrate the prototype
 
@@ -25,13 +25,16 @@ For a browser demo, run `flutter run -d chrome`. To create a static build with l
 - **Семья** shows the owner, an invited trusted adult and the tracker wearer. Tap **Добавить устройство**, enter **DEMO-042**, review the access for each person and explicitly confirm.
 - **Устройство → Демо-сценарий** switches among fresh, stale, offline, low battery, SOS, loading, empty, unavailable and error. The selected scenario is shared by the screens.
 - **Устройство → Тестовый SOS** demonstrates preparation, sending and simulated acknowledgement. With **Нет связи** selected, the flow shows an unconfirmed result and the time of last contact.
-- Notification switches and device removal are local to the current session. Restarting resets the demo.
+- Web demo state, notification choices and language are stored locally in the browser. Native targets keep demo state in the current session.
+- **Устройство → Физический трекер** opens the separate USB setup. Real hardware contact and diagnostics never enter the demo map or browser storage.
 
 ## Source and localization
 
 - `lib/app/` contains the Material theme, shared UI and navigation shell.
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) documents the shared tokens, components, and accessibility behavior.
 - `lib/features/` contains the map, event feed, family and pairing, device and SOS screens.
+- `lib/hardware/` and `web/tracker_serial.js` implement the local USB transport and platform fallback.
+- [HARDWARE_SETUP.md](HARDWARE_SETUP.md) documents local USB and the serial utility. [firmware/README.md](firmware/README.md) covers the Arduino bench build.
 - `lib/data/mock_tracker_repository.dart` provides deterministic state, mock positions, pairing, notification preferences and SOS transitions.
 - `lib/l10n/` holds the Russian template, complete English translations and an empty Kyrgyz ARB scaffold. The globe menu switches between Russian and English. The Kyrgyz preview uses Russian pending review by a fluent translator and support for Kyrgyz Material control labels.
 
@@ -47,6 +50,6 @@ flutter test
 
 ## Scope and limitations
 
-This demo covers the map, a short events feed, visible family access, explicit pairing and a test SOS. All state is in memory. The map uses sample points on a local drawing and a schematic accuracy radius. The prototype has no concealed tracking, production permissions, real hardware, backend, authentication, push notifications, GNSS, cellular communication, live child location, emergency integration or detailed movement history. Outdoor mode, LoRa, mountain navigation and offline topographic routing are outside this MVP. The optional child-facing view is deferred.
+The demo uses fictional map positions, family members and events. The separate bench setup can exchange commands over an explicitly chosen USB port and needs physical approval to save contacts or send a fixed test SMS. The firmware starts with its hardware profile disabled until the board revision and connections are checked. Live location, remote configuration, production authentication, push notifications and emergency-services integration remain outside this MVP.
 
-The Windows host's API 37 emulator did not complete boot. Browser and widget tests exercise the shared UI. Building or launching the iOS target requires macOS and Xcode.
+The Windows host's API 37 emulator did not complete boot. Browser and widget tests exercise the shared UI. Building or launching the iOS target requires macOS and Xcode. No Waveshare board was detected for an on-device check.

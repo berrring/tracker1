@@ -1,8 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../data/demo_store.dart';
 import '../data/mock_tracker_repository.dart';
 import '../features/device_sos.dart';
 import '../features/family_events.dart';
+import '../features/hardware_setup.dart';
 import '../features/map_screen.dart';
 import '../l10n/generated/app_localizations.dart';
 import 'design.dart';
@@ -16,8 +18,13 @@ class SafeTrackApp extends StatefulWidget {
 }
 
 class _SafeTrackAppState extends State<SafeTrackApp> {
-  late final repo = widget.repository ?? MockTrackerRepository();
-  Locale locale = const Locale('ru');
+  final store = browserDemoStore();
+  late final repo = widget.repository ?? MockTrackerRepository(store: store);
+  late Locale locale = switch (store.read('language')) {
+    'en' => const Locale('en'),
+    'ky' => const Locale('ky'),
+    _ => const Locale('ru'),
+  };
 
   @override
   void dispose() {
@@ -36,10 +43,14 @@ class _SafeTrackAppState extends State<SafeTrackApp> {
       ...GlobalMaterialLocalizations.delegates,
     ],
     supportedLocales: AppLocalizations.supportedLocales,
+    routes: {'/hardware': (_) => const HardwareSetupScreen()},
     home: _Shell(
       repo: repo,
       locale: locale,
-      setLocale: (value) => setState(() => locale = value),
+      setLocale: (value) {
+        store.write('language', value.languageCode);
+        setState(() => locale = value);
+      },
     ),
   );
 }

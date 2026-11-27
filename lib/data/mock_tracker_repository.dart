@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+
+import 'demo_store.dart';
 
 enum TrackerStatus {
   fresh,
@@ -30,6 +34,25 @@ class LocationSample {
 }
 
 class MockTrackerRepository extends ChangeNotifier {
+  MockTrackerRepository({DemoStore? store}) : _store = store {
+    final saved = store?.read('tracker');
+    if (saved == null) return;
+    try {
+      final data = jsonDecode(saved);
+      if (data is! Map<String, dynamic>) return;
+      _status = TrackerStatus.values.firstWhere(
+        (status) => status.name == data['status'],
+        orElse: () => TrackerStatus.fresh,
+      );
+      _notifyBattery = data['notifyBattery'] != false;
+      _notifyNetwork = data['notifyNetwork'] != false;
+      _sosAcknowledged = data['sosAcknowledged'] == true;
+    } on FormatException {
+      // Invalid browser data falls back to the initial demonstration.
+    }
+  }
+
+  final DemoStore? _store;
   static const trackerId = 'ST-DEMO-042';
   static const pairingCode = 'DEMO-042';
 
@@ -72,7 +95,7 @@ class MockTrackerRepository extends ChangeNotifier {
 
   void select(TrackerStatus value) {
     _status = value;
-    notifyListeners();
+    _save();
   }
 
   bool isPairingCodeValid(String code) =>
@@ -97,7 +120,7 @@ class MockTrackerRepository extends ChangeNotifier {
     if (current == SosDemoState.preparing) return SosDemoState.sending;
     if (current == SosDemoState.sending) {
       _sosAcknowledged = true;
-      notifyListeners();
+      _save();
       return SosDemoState.acknowledged;
     }
     return current;
@@ -106,6 +129,19 @@ class MockTrackerRepository extends ChangeNotifier {
   void changePreferences({bool? battery, bool? network}) {
     _notifyBattery = battery ?? _notifyBattery;
     _notifyNetwork = network ?? _notifyNetwork;
+    _save();
+  }
+
+  void _save() {
+    _store?.write(
+      'tracker',
+      jsonEncode({
+        'status': _status.name,
+        'notifyBattery': _notifyBattery,
+        'notifyNetwork': _notifyNetwork,
+        'sosAcknowledged': _sosAcknowledged,
+      }),
+    );
     notifyListeners();
   }
 }

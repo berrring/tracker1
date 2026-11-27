@@ -832,6 +832,318 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Нет данных, подтверждающих доставку сигнала.'**
   String get noDelivery;
+
+  /// No description provided for @hardwareTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Физический трекер'**
+  String get hardwareTitle;
+
+  /// No description provided for @hardwareIntro.
+  ///
+  /// In ru, this message translates to:
+  /// **'Стендовая настройка по USB. Карта и события семьи остаются демонстрационными.'**
+  String get hardwareIntro;
+
+  /// No description provided for @hardwareOpen.
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройка по USB'**
+  String get hardwareOpen;
+
+  /// No description provided for @hardwareConnect.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбрать USB-порт'**
+  String get hardwareConnect;
+
+  /// No description provided for @hardwareDisconnect.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отключить USB'**
+  String get hardwareDisconnect;
+
+  /// No description provided for @hardwareDisconnected.
+  ///
+  /// In ru, this message translates to:
+  /// **'USB не подключён'**
+  String get hardwareDisconnected;
+
+  /// No description provided for @hardwareConnected.
+  ///
+  /// In ru, this message translates to:
+  /// **'USB подключён'**
+  String get hardwareConnected;
+
+  /// No description provided for @hardwareUnsupported.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбор USB недоступен. Используйте Chrome или Edge на компьютере либо локальную утилиту из HARDWARE_SETUP.md.'**
+  String get hardwareUnsupported;
+
+  /// No description provided for @hardwareSteps.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3. При запросе нажмите BOOT на плате в течение 20 секунд.'**
+  String get hardwareSteps;
+
+  /// No description provided for @hardwareBoard.
+  ///
+  /// In ru, this message translates to:
+  /// **'Модель платы'**
+  String get hardwareBoard;
+
+  /// No description provided for @hardwareName.
+  ///
+  /// In ru, this message translates to:
+  /// **'Имя устройства'**
+  String get hardwareName;
+
+  /// No description provided for @hardwarePhone.
+  ///
+  /// In ru, this message translates to:
+  /// **'Номер для тестового SOS'**
+  String get hardwarePhone;
+
+  /// No description provided for @hardwarePhoneHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Международный формат. Введите +, код страны и номер без пробелов.'**
+  String get hardwarePhoneHint;
+
+  /// No description provided for @hardwareNameInvalid.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите имя до 48 байт без вертикальной черты.'**
+  String get hardwareNameInvalid;
+
+  /// No description provided for @hardwarePhoneInvalid.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите + и 8–15 цифр. Первая цифра не может быть 0.'**
+  String get hardwarePhoneInvalid;
+
+  /// No description provided for @hardwareSave.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверить и записать контакт'**
+  String get hardwareSave;
+
+  /// No description provided for @hardwareConfirm.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подтвердить контакт'**
+  String get hardwareConfirm;
+
+  /// No description provided for @hardwareConsent.
+  ///
+  /// In ru, this message translates to:
+  /// **'Владелец номера согласен получать тестовые SMS.'**
+  String get hardwareConsent;
+
+  /// No description provided for @hardwarePrivate.
+  ///
+  /// In ru, this message translates to:
+  /// **'Номер записывается на подключённую плату. Страница не сохраняет его в браузере.'**
+  String get hardwarePrivate;
+
+  /// No description provided for @hardwareDiagnostics.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверить модем и GNSS'**
+  String get hardwareDiagnostics;
+
+  /// No description provided for @hardwareConfig.
+  ///
+  /// In ru, this message translates to:
+  /// **'Контакт на плате'**
+  String get hardwareConfig;
+
+  /// No description provided for @hardwareConfigured.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранён'**
+  String get hardwareConfigured;
+
+  /// No description provided for @hardwareUnconfigured.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не настроен'**
+  String get hardwareUnconfigured;
+
+  /// No description provided for @hardwareModem.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ответ модема'**
+  String get hardwareModem;
+
+  /// No description provided for @hardwareGnss.
+  ///
+  /// In ru, this message translates to:
+  /// **'Статус GNSS'**
+  String get hardwareGnss;
+
+  /// No description provided for @hardwareUnavailable.
+  ///
+  /// In ru, this message translates to:
+  /// **'Недоступно'**
+  String get hardwareUnavailable;
+
+  /// No description provided for @hardwareNotChecked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не проверено'**
+  String get hardwareNotChecked;
+
+  /// No description provided for @hardwareReady.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отвечает'**
+  String get hardwareReady;
+
+  /// No description provided for @hardwareRegistered.
+  ///
+  /// In ru, this message translates to:
+  /// **'Модем зарегистрирован'**
+  String get hardwareRegistered;
+
+  /// No description provided for @hardwareNotRegistered.
+  ///
+  /// In ru, this message translates to:
+  /// **'Регистрация не подтверждена'**
+  String get hardwareNotRegistered;
+
+  /// No description provided for @hardwareFix.
+  ///
+  /// In ru, this message translates to:
+  /// **'Есть фиксация'**
+  String get hardwareFix;
+
+  /// No description provided for @hardwareNoFix.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет фиксации'**
+  String get hardwareNoFix;
+
+  /// No description provided for @hardwareLocked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Стендовый профиль выключен. Сверьте ревизию платы перед включением GPIO.'**
+  String get hardwareLocked;
+
+  /// No description provided for @hardwarePending.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ожидание подтверждения на плате. Нажмите BOOT для выбранного действия.'**
+  String get hardwarePending;
+
+  /// No description provided for @hardwareBusy.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выполняется проверка USB или диагностика.'**
+  String get hardwareBusy;
+
+  /// No description provided for @hardwareTest.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отправить тестовое SMS'**
+  String get hardwareTest;
+
+  /// No description provided for @hardwareTestTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подтвердить тестовое SMS'**
+  String get hardwareTestTitle;
+
+  /// No description provided for @hardwareTestCopy.
+  ///
+  /// In ru, this message translates to:
+  /// **'Плата отправит на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату. Для отправки нажмите BOOT.'**
+  String get hardwareTestCopy;
+
+  /// No description provided for @hardwareClear.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить контакт с платы'**
+  String get hardwareClear;
+
+  /// No description provided for @hardwareClearCopy.
+  ///
+  /// In ru, this message translates to:
+  /// **'Номер будет удалён с платы после нажатия BOOT.'**
+  String get hardwareClearCopy;
+
+  /// No description provided for @hardwareCleared.
+  ///
+  /// In ru, this message translates to:
+  /// **'Контакт удалён с платы.'**
+  String get hardwareCleared;
+
+  /// No description provided for @hardwareAccepted.
+  ///
+  /// In ru, this message translates to:
+  /// **'Модем принял тестовое SMS. Доставка получателю не подтверждена.'**
+  String get hardwareAccepted;
+
+  /// No description provided for @hardwareUnknownSms.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет итогового ответа модема. Статус отправки и доставки неизвестен.'**
+  String get hardwareUnknownSms;
+
+  /// No description provided for @hardwareRejected.
+  ///
+  /// In ru, this message translates to:
+  /// **'Модем отклонил тестовое SMS.'**
+  String get hardwareRejected;
+
+  /// No description provided for @hardwareNoNetwork.
+  ///
+  /// In ru, this message translates to:
+  /// **'Регистрация в сети не подтверждена. SMS не отправлялось.'**
+  String get hardwareNoNetwork;
+
+  /// No description provided for @hardwareTimeout.
+  ///
+  /// In ru, this message translates to:
+  /// **'Время ожидания истекло. Проверьте порт или повторите подтверждение на плате.'**
+  String get hardwareTimeout;
+
+  /// No description provided for @hardwareWrong.
+  ///
+  /// In ru, this message translates to:
+  /// **'Устройство не ответило протоколом SafeTrack. Проверьте порт и прошивку.'**
+  String get hardwareWrong;
+
+  /// No description provided for @hardwarePortError.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сбой обмена по USB. Проверьте кабель и закройте монитор порта.'**
+  String get hardwarePortError;
+
+  /// No description provided for @hardwareStorage.
+  ///
+  /// In ru, this message translates to:
+  /// **'Плата не подтвердила запись в память.'**
+  String get hardwareStorage;
+
+  /// No description provided for @hardwareNoModem.
+  ///
+  /// In ru, this message translates to:
+  /// **'Модем не ответил. Проверьте питание и переключатели.'**
+  String get hardwareNoModem;
+
+  /// No description provided for @hardwareSelectionCancelled.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбор USB-порта отменён.'**
+  String get hardwareSelectionCancelled;
+
+  /// No description provided for @notifyDetailWeb.
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройки сохраняются в этом браузере.'**
+  String get notifyDetailWeb;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 
 import '../app/design.dart';
@@ -17,6 +18,17 @@ class DeviceScreen extends StatelessWidget {
     return PageList(
       storageKey: const PageStorageKey('device'),
       children: [
+        Panel(
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.usb),
+            title: Text(s.hardwareTitle),
+            subtitle: Text(s.hardwareOpen),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/hardware'),
+          ),
+        ),
+        const SizedBox(height: SafeSpace.md),
         Panel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +134,7 @@ class DeviceScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(s.preferences, style: context.type.titleLarge),
-                Text(s.notifyDetail),
+                Text(kIsWeb ? s.notifyDetailWeb : s.notifyDetail),
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   title: Text(s.notifyBattery),

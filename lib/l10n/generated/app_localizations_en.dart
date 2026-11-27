@@ -392,4 +392,180 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noDelivery =>
       'There is no evidence that the signal was delivered.';
+
+  @override
+  String get hardwareTitle => 'Physical tracker';
+
+  @override
+  String get hardwareIntro =>
+      'USB bench setup. Map and family activity remain simulated.';
+
+  @override
+  String get hardwareOpen => 'USB setup';
+
+  @override
+  String get hardwareConnect => 'Choose USB port';
+
+  @override
+  String get hardwareDisconnect => 'Disconnect USB';
+
+  @override
+  String get hardwareDisconnected => 'USB disconnected';
+
+  @override
+  String get hardwareConnected => 'USB connected';
+
+  @override
+  String get hardwareUnsupported =>
+      'USB selection is unavailable. Use desktop Chrome or Edge, or the local utility in HARDWARE_SETUP.md.';
+
+  @override
+  String get hardwareSteps =>
+      'Connect the ESP32-S3 with a data cable, close Arduino Serial Monitor and choose the ESP32-S3 port. When prompted, press BOOT within 20 seconds.';
+
+  @override
+  String get hardwareBoard => 'Board model';
+
+  @override
+  String get hardwareName => 'Device name';
+
+  @override
+  String get hardwarePhone => 'Test SOS contact';
+
+  @override
+  String get hardwarePhoneHint =>
+      'Enter +, country code and number without spaces.';
+
+  @override
+  String get hardwareNameInvalid =>
+      'Enter a name up to 48 bytes without the vertical bar.';
+
+  @override
+  String get hardwarePhoneInvalid =>
+      'Enter + and 8–15 digits. The first digit cannot be 0.';
+
+  @override
+  String get hardwareSave => 'Review and save contact';
+
+  @override
+  String get hardwareConfirm => 'Confirm contact';
+
+  @override
+  String get hardwareConsent =>
+      'The owner of this number agrees to receive test SMS.';
+
+  @override
+  String get hardwarePrivate =>
+      'The number is saved on the connected device. The page does not keep it in browser storage.';
+
+  @override
+  String get hardwareDiagnostics => 'Check modem and GNSS';
+
+  @override
+  String get hardwareConfig => 'Contact on device';
+
+  @override
+  String get hardwareConfigured => 'Saved';
+
+  @override
+  String get hardwareUnconfigured => 'Not configured';
+
+  @override
+  String get hardwareModem => 'Modem response';
+
+  @override
+  String get hardwareGnss => 'GNSS status';
+
+  @override
+  String get hardwareUnavailable => 'Unavailable';
+
+  @override
+  String get hardwareNotChecked => 'Not checked';
+
+  @override
+  String get hardwareReady => 'Responding';
+
+  @override
+  String get hardwareRegistered => 'Modem registered';
+
+  @override
+  String get hardwareNotRegistered => 'Registration unconfirmed';
+
+  @override
+  String get hardwareFix => 'Fix available';
+
+  @override
+  String get hardwareNoFix => 'No fix';
+
+  @override
+  String get hardwareLocked =>
+      'The bench profile is disabled. Verify the board revision before enabling GPIO.';
+
+  @override
+  String get hardwarePending =>
+      'Waiting for confirmation on the board. Press BOOT to approve the requested action.';
+
+  @override
+  String get hardwareBusy => 'Checking USB or running diagnostics.';
+
+  @override
+  String get hardwareTest => 'Send test SMS';
+
+  @override
+  String get hardwareTestTitle => 'Confirm test SMS';
+
+  @override
+  String get hardwareTestCopy =>
+      'The device will send “SafeTrack bench test. No emergency.” to the saved number. Carrier charges may apply. Sending requires a BOOT press.';
+
+  @override
+  String get hardwareClear => 'Clear contact from device';
+
+  @override
+  String get hardwareClearCopy =>
+      'The number will be cleared after a BOOT press.';
+
+  @override
+  String get hardwareCleared => 'Contact cleared from the device.';
+
+  @override
+  String get hardwareAccepted =>
+      'The modem accepted the test SMS. Delivery to the recipient is unconfirmed.';
+
+  @override
+  String get hardwareUnknownSms =>
+      'No final modem response. Submission and delivery are unknown.';
+
+  @override
+  String get hardwareRejected => 'The modem rejected the test SMS.';
+
+  @override
+  String get hardwareNoNetwork =>
+      'Network registration is unconfirmed. The test SMS was not submitted.';
+
+  @override
+  String get hardwareTimeout =>
+      'The request timed out. Check the port or repeat confirmation on the board.';
+
+  @override
+  String get hardwareWrong =>
+      'The device did not respond with the SafeTrack protocol. Check the port and firmware.';
+
+  @override
+  String get hardwarePortError =>
+      'USB communication failed. Check the cable and close the serial monitor.';
+
+  @override
+  String get hardwareStorage =>
+      'The device did not confirm the write to storage.';
+
+  @override
+  String get hardwareNoModem =>
+      'The modem did not respond. Check power and switches.';
+
+  @override
+  String get hardwareSelectionCancelled => 'USB port selection cancelled.';
+
+  @override
+  String get notifyDetailWeb => 'Preferences are saved in this browser.';
 }
