@@ -1,0 +1,871 @@
+// ignore_for_file: deprecated_member_use
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_en.dart';
+import 'app_localizations_ky.dart';
+import 'app_localizations_ru.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'generated/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations? of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('ky'),
+    Locale('ru'),
+  ];
+
+  /// No description provided for @appName.
+  ///
+  /// In ru, this message translates to:
+  /// **'SafeTrack Family'**
+  String get appName;
+
+  /// No description provided for @demo.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо'**
+  String get demo;
+
+  /// No description provided for @map.
+  ///
+  /// In ru, this message translates to:
+  /// **'Карта'**
+  String get map;
+
+  /// No description provided for @events.
+  ///
+  /// In ru, this message translates to:
+  /// **'События'**
+  String get events;
+
+  /// No description provided for @family.
+  ///
+  /// In ru, this message translates to:
+  /// **'Семья'**
+  String get family;
+
+  /// No description provided for @device.
+  ///
+  /// In ru, this message translates to:
+  /// **'Устройство'**
+  String get device;
+
+  /// No description provided for @language.
+  ///
+  /// In ru, this message translates to:
+  /// **'Язык интерфейса'**
+  String get language;
+
+  /// No description provided for @russian.
+  ///
+  /// In ru, this message translates to:
+  /// **'Русский'**
+  String get russian;
+
+  /// No description provided for @english.
+  ///
+  /// In ru, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @kyrgyz.
+  ///
+  /// In ru, this message translates to:
+  /// **'Кыргызча · русский интерфейс'**
+  String get kyrgyz;
+
+  /// No description provided for @ayan.
+  ///
+  /// In ru, this message translates to:
+  /// **'Аян'**
+  String get ayan;
+
+  /// No description provided for @aigul.
+  ///
+  /// In ru, this message translates to:
+  /// **'Айгуль'**
+  String get aigul;
+
+  /// No description provided for @timur.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тимур'**
+  String get timur;
+
+  /// No description provided for @tracker.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекер Аяна'**
+  String get tracker;
+
+  /// No description provided for @selector.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбрать трекер'**
+  String get selector;
+
+  /// No description provided for @selectTracker.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекеры семьи'**
+  String get selectTracker;
+
+  /// No description provided for @sample.
+  ///
+  /// In ru, this message translates to:
+  /// **'Последние известные данные'**
+  String get sample;
+
+  /// No description provided for @todayTime.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сегодня, 14:32'**
+  String get todayTime;
+
+  /// No description provided for @staleTime.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сегодня, 14:08'**
+  String get staleTime;
+
+  /// No description provided for @offlineTime.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сегодня, 14:20'**
+  String get offlineTime;
+
+  /// No description provided for @accuracyGood.
+  ///
+  /// In ru, this message translates to:
+  /// **'±18 м'**
+  String get accuracyGood;
+
+  /// No description provided for @accuracyStale.
+  ///
+  /// In ru, this message translates to:
+  /// **'±32 м'**
+  String get accuracyStale;
+
+  /// No description provided for @accuracyOffline.
+  ///
+  /// In ru, this message translates to:
+  /// **'±24 м'**
+  String get accuracyOffline;
+
+  /// No description provided for @accuracy.
+  ///
+  /// In ru, this message translates to:
+  /// **'Точность'**
+  String get accuracy;
+
+  /// No description provided for @time.
+  ///
+  /// In ru, this message translates to:
+  /// **'Время позиции'**
+  String get time;
+
+  /// No description provided for @battery.
+  ///
+  /// In ru, this message translates to:
+  /// **'Заряд'**
+  String get battery;
+
+  /// No description provided for @network.
+  ///
+  /// In ru, this message translates to:
+  /// **'Связь'**
+  String get network;
+
+  /// No description provided for @online.
+  ///
+  /// In ru, this message translates to:
+  /// **'В сети · LTE'**
+  String get online;
+
+  /// No description provided for @offline.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет связи'**
+  String get offline;
+
+  /// No description provided for @fresh.
+  ///
+  /// In ru, this message translates to:
+  /// **'Свежая позиция'**
+  String get fresh;
+
+  /// No description provided for @stale.
+  ///
+  /// In ru, this message translates to:
+  /// **'Устаревшая позиция'**
+  String get stale;
+
+  /// No description provided for @low.
+  ///
+  /// In ru, this message translates to:
+  /// **'Низкий заряд'**
+  String get low;
+
+  /// No description provided for @sos.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тестовый SOS'**
+  String get sos;
+
+  /// No description provided for @loading.
+  ///
+  /// In ru, this message translates to:
+  /// **'Загрузка данных'**
+  String get loading;
+
+  /// No description provided for @empty.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекер не подключён'**
+  String get empty;
+
+  /// No description provided for @unavailable.
+  ///
+  /// In ru, this message translates to:
+  /// **'Позиция недоступна'**
+  String get unavailable;
+
+  /// No description provided for @error.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить данные'**
+  String get error;
+
+  /// No description provided for @recent.
+  ///
+  /// In ru, this message translates to:
+  /// **'24 сек назад'**
+  String get recent;
+
+  /// No description provided for @old.
+  ///
+  /// In ru, this message translates to:
+  /// **'24 мин назад'**
+  String get old;
+
+  /// No description provided for @offlineAgo.
+  ///
+  /// In ru, this message translates to:
+  /// **'12 мин назад'**
+  String get offlineAgo;
+
+  /// No description provided for @lastContact.
+  ///
+  /// In ru, this message translates to:
+  /// **'Последняя связь'**
+  String get lastContact;
+
+  /// No description provided for @unknown.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет данных'**
+  String get unknown;
+
+  /// No description provided for @mapLegend.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демонстрационная карта'**
+  String get mapLegend;
+
+  /// No description provided for @park.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сад Листьев'**
+  String get park;
+
+  /// No description provided for @square.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сквер Маяк'**
+  String get square;
+
+  /// No description provided for @river.
+  ///
+  /// In ru, this message translates to:
+  /// **'Река Лента'**
+  String get river;
+
+  /// No description provided for @lane.
+  ///
+  /// In ru, this message translates to:
+  /// **'Улица Ив'**
+  String get lane;
+
+  /// No description provided for @recenter.
+  ///
+  /// In ru, this message translates to:
+  /// **'На последнее местоположение'**
+  String get recenter;
+
+  /// No description provided for @freshDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Показана последняя точка из демо-данных.'**
+  String get freshDetail;
+
+  /// No description provided for @staleDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Позиция давно не обновлялась. Актуальное местоположение неизвестно.'**
+  String get staleDetail;
+
+  /// No description provided for @offlineDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Показана точка, сохранённая до потери связи.'**
+  String get offlineDetail;
+
+  /// No description provided for @lowDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'В демо-сценарии заряд опустился ниже 20%.'**
+  String get lowDetail;
+
+  /// No description provided for @sosDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбран сценарий SOS. Проверить его можно во вкладке «Устройство».'**
+  String get sosDetail;
+
+  /// No description provided for @loadingDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Получаем демонстрационные данные трекера.'**
+  String get loadingDetail;
+
+  /// No description provided for @emptyDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавьте демонстрационный трекер, чтобы увидеть его данные.'**
+  String get emptyDetail;
+
+  /// No description provided for @unavailableDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекер на связи, но сохранённых координат пока нет.'**
+  String get unavailableDetail;
+
+  /// No description provided for @errorDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Данные трекера недоступны. Попробуйте загрузить их ещё раз.'**
+  String get errorDetail;
+
+  /// No description provided for @retry.
+  ///
+  /// In ru, this message translates to:
+  /// **'Повторить'**
+  String get retry;
+
+  /// No description provided for @state.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо-сценарий'**
+  String get state;
+
+  /// No description provided for @stateHelp.
+  ///
+  /// In ru, this message translates to:
+  /// **'Переключайте локальные состояния трекера.'**
+  String get stateHelp;
+
+  /// No description provided for @details.
+  ///
+  /// In ru, this message translates to:
+  /// **'Данные трекера'**
+  String get details;
+
+  /// No description provided for @id.
+  ///
+  /// In ru, this message translates to:
+  /// **'Идентификатор'**
+  String get id;
+
+  /// No description provided for @firmware.
+  ///
+  /// In ru, this message translates to:
+  /// **'Прошивка'**
+  String get firmware;
+
+  /// No description provided for @firmwareValue.
+  ///
+  /// In ru, this message translates to:
+  /// **'0.0.0 · демо'**
+  String get firmwareValue;
+
+  /// No description provided for @preferences.
+  ///
+  /// In ru, this message translates to:
+  /// **'Уведомления'**
+  String get preferences;
+
+  /// No description provided for @notifyBattery.
+  ///
+  /// In ru, this message translates to:
+  /// **'Низкий заряд'**
+  String get notifyBattery;
+
+  /// No description provided for @notifyNetwork.
+  ///
+  /// In ru, this message translates to:
+  /// **'Потеря связи'**
+  String get notifyNetwork;
+
+  /// No description provided for @notifyDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройки сохраняются в текущей сессии.'**
+  String get notifyDetail;
+
+  /// No description provided for @remove.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить устройство'**
+  String get remove;
+
+  /// No description provided for @removePrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекер исчезнет из карты и списка устройств в текущей демо-сессии.'**
+  String get removePrompt;
+
+  /// No description provided for @cancel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get cancel;
+
+  /// No description provided for @close.
+  ///
+  /// In ru, this message translates to:
+  /// **'Закрыть'**
+  String get close;
+
+  /// No description provided for @access.
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ в семье'**
+  String get access;
+
+  /// No description provided for @accessIntro.
+  ///
+  /// In ru, this message translates to:
+  /// **'Здесь видно, кто может просматривать данные трекера и управлять доступом.'**
+  String get accessIntro;
+
+  /// No description provided for @owner.
+  ///
+  /// In ru, this message translates to:
+  /// **'Владелец семьи'**
+  String get owner;
+
+  /// No description provided for @adult.
+  ///
+  /// In ru, this message translates to:
+  /// **'Доверенный взрослый'**
+  String get adult;
+
+  /// No description provided for @wearer.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ребёнок / носитель трекера'**
+  String get wearer;
+
+  /// No description provided for @ownerAccess.
+  ///
+  /// In ru, this message translates to:
+  /// **'Позиция, заряд, связь и события. Управляет устройством и доступом.'**
+  String get ownerAccess;
+
+  /// No description provided for @adultAccess.
+  ///
+  /// In ru, this message translates to:
+  /// **'После принятия приглашения — позиция, заряд, связь и события.'**
+  String get adultAccess;
+
+  /// No description provided for @wearerAccess.
+  ///
+  /// In ru, this message translates to:
+  /// **'Видит состояние своего трекера и список взрослых с доступом.'**
+  String get wearerAccess;
+
+  /// No description provided for @active.
+  ///
+  /// In ru, this message translates to:
+  /// **'Активен'**
+  String get active;
+
+  /// No description provided for @invited.
+  ///
+  /// In ru, this message translates to:
+  /// **'Приглашение'**
+  String get invited;
+
+  /// No description provided for @add.
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавить устройство'**
+  String get add;
+
+  /// No description provided for @pairCode.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демонстрационный код'**
+  String get pairCode;
+
+  /// No description provided for @pairInstructions.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите указанный код, чтобы продолжить.'**
+  String get pairInstructions;
+
+  /// No description provided for @codeField.
+  ///
+  /// In ru, this message translates to:
+  /// **'Код подключения'**
+  String get codeField;
+
+  /// No description provided for @badCode.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте демонстрационный код.'**
+  String get badCode;
+
+  /// No description provided for @next.
+  ///
+  /// In ru, this message translates to:
+  /// **'Продолжить'**
+  String get next;
+
+  /// No description provided for @pairReview.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте права доступа'**
+  String get pairReview;
+
+  /// No description provided for @pairAccess.
+  ///
+  /// In ru, this message translates to:
+  /// **'Айгуль получит доступ к позиции, заряду, связи и событиям и сможет управлять трекером. Тимур получит доступ к этим данным после принятия приглашения. Аян увидит, кто имеет доступ к его трекеру.'**
+  String get pairAccess;
+
+  /// No description provided for @confirmPair.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подтвердить подключение'**
+  String get confirmPair;
+
+  /// No description provided for @paired.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо-трекер подключён'**
+  String get paired;
+
+  /// No description provided for @pairAlready.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекер уже подключён. Можно повторить подключение для демонстрации.'**
+  String get pairAlready;
+
+  /// No description provided for @feed.
+  ///
+  /// In ru, this message translates to:
+  /// **'События безопасности'**
+  String get feed;
+
+  /// No description provided for @feedIntro.
+  ///
+  /// In ru, this message translates to:
+  /// **'Изменения связи, заряда и тесты SOS.'**
+  String get feedIntro;
+
+  /// No description provided for @today.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сегодня'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вчера'**
+  String get yesterday;
+
+  /// No description provided for @updated.
+  ///
+  /// In ru, this message translates to:
+  /// **'Координаты обновлены'**
+  String get updated;
+
+  /// No description provided for @updatedDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Получена демонстрационная позиция с точностью ±18 м.'**
+  String get updatedDetail;
+
+  /// No description provided for @lost.
+  ///
+  /// In ru, this message translates to:
+  /// **'Устройство потеряло сеть'**
+  String get lost;
+
+  /// No description provided for @lostDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Трекер временно перестал передавать данные в демо.'**
+  String get lostDetail;
+
+  /// No description provided for @restored.
+  ///
+  /// In ru, this message translates to:
+  /// **'Соединение восстановлено'**
+  String get restored;
+
+  /// No description provided for @restoredDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо-трекер снова на связи.'**
+  String get restoredDetail;
+
+  /// No description provided for @chargeEvent.
+  ///
+  /// In ru, this message translates to:
+  /// **'Заряд ниже 20%'**
+  String get chargeEvent;
+
+  /// No description provided for @chargeDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'В этом событии заряд составил 18%.'**
+  String get chargeDetail;
+
+  /// No description provided for @sosEvent.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тестовый SOS подтверждён'**
+  String get sosEvent;
+
+  /// No description provided for @sosEventDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подтверждение относится только к демонстрации.'**
+  String get sosEventDetail;
+
+  /// No description provided for @info.
+  ///
+  /// In ru, this message translates to:
+  /// **'Информация'**
+  String get info;
+
+  /// No description provided for @attention.
+  ///
+  /// In ru, this message translates to:
+  /// **'Внимание'**
+  String get attention;
+
+  /// No description provided for @ok.
+  ///
+  /// In ru, this message translates to:
+  /// **'В порядке'**
+  String get ok;
+
+  /// No description provided for @now.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сейчас'**
+  String get now;
+
+  /// No description provided for @savedEvents.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранённые демо-события доступны ниже.'**
+  String get savedEvents;
+
+  /// No description provided for @sosWarning.
+  ///
+  /// In ru, this message translates to:
+  /// **'Это демонстрационный сценарий. Реальный сигнал никому не отправляется.'**
+  String get sosWarning;
+
+  /// No description provided for @startSos.
+  ///
+  /// In ru, this message translates to:
+  /// **'Запустить демонстрацию SOS'**
+  String get startSos;
+
+  /// No description provided for @prepare.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подготовка'**
+  String get prepare;
+
+  /// No description provided for @sending.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отправка'**
+  String get sending;
+
+  /// No description provided for @demoAck.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подтверждено в демо-режиме'**
+  String get demoAck;
+
+  /// No description provided for @demoSuccess.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо-SOS подтверждён'**
+  String get demoSuccess;
+
+  /// No description provided for @demoSuccessDetail.
+  ///
+  /// In ru, this message translates to:
+  /// **'Это только симуляция интерфейса. Реальное сообщение не отправлялось.'**
+  String get demoSuccessDetail;
+
+  /// No description provided for @offlineLast.
+  ///
+  /// In ru, this message translates to:
+  /// **'Последняя связь с устройством: 12 мин назад.'**
+  String get offlineLast;
+
+  /// No description provided for @unconfirmed.
+  ///
+  /// In ru, this message translates to:
+  /// **'SOS не подтверждён.'**
+  String get unconfirmed;
+
+  /// No description provided for @noDelivery.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет данных, подтверждающих доставку сигнала.'**
+  String get noDelivery;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['en', 'ky', 'ru'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
+    case 'ky':
+      return AppLocalizationsKy();
+    case 'ru':
+      return AppLocalizationsRu();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}
