@@ -5,8 +5,10 @@
 - The supplied mobile SDK key remains outside the source and deployment bundle. A browser MapGL key is still needed for a live 2GIS test. See [MAP_PROVIDER.md](MAP_PROVIDER.md).
 - Recorded the reported header installation. IO13 and IO14 share the camera interface and remain unassigned. Firmware files are unchanged.
 - Chromium preview rendered OpenFreeMap tiles and attribution and exercised zoom and recenter. Inspected map, events, SOS details, family profiles, pairing, device controls and the disconnected USB wizard at 390, 820 and 1440 px widths.
-- Flutter analysis, 22 widget and unit tests, and three MapGL adapter tests passed during development. The final release is pending a rebuild after visual fixes. The Android build is being retried with built-in Kotlin enabled for MapLibre.
-- Next: verify native build output, audit the final public/ bundle, advance main and confirm that the Vercel production bundle matches the Git commit.
+- Flutter analysis, 22 widget and unit tests, three MapGL adapter tests, and the final Flutter Web release passed. Rebuilt the 38-file `public/` directory and captured five screens at three widths.
+- Verified source checkpoint `09d658a178c2f215a0ae640f12d3baefc3d45202` on `checkpoint/05-dashboard`.
+- Android moved past the legacy Kotlin integration failure with built-in Kotlin enabled. The build is resolving dependencies. iOS requires macOS and Xcode for native verification.
+- Next: verify the Android result, advance main and confirm that the Vercel production bundle matches the Git commit.
 
 # Checkpoint 04 — slide SOS and setup wizard
 
