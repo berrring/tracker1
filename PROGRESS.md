@@ -1,3 +1,9 @@
+# Checkpoint 06 — Supabase family accounts
+
+- Authenticated Supabase MCP inspection confirmed an empty public schema. The security advisor flagged API execution grants for the existing RLS event trigger helper.
+- Versioned the family-account schema, permissions, RLS and restricted RPCs. PostgreSQL 16 tests passed using fictional identities and transaction rollback.
+- Next: apply the reviewed migration through MCP, verify hosted RLS and security advisors, finish Flutter regression and release checks, and validate auth configuration.
+
 # Checkpoint 05 — SafeTrack dashboard redesign
 
 - Implemented Inter and the route mark, desktop navigation and dashboard, mobile map-first flow, chronological events, SOS details, family permissions and compact device and USB screens.
