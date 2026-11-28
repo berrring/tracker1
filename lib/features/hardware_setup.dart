@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:material_ui/material_ui.dart';
 
 import '../app/design.dart';
+import '../hardware/tracker_session.dart';
 import '../hardware/tracker_usb.dart';
 import '../l10n/generated/app_localizations.dart';
 
@@ -15,89 +14,44 @@ class HardwareSetupScreen extends StatefulWidget {
 }
 
 class _HardwareSetupScreenState extends State<HardwareSetupScreen> {
-  late final usb = widget.transport ?? createTrackerUsb();
+  late final session = TrackerSession(widget.transport ?? createTrackerUsb());
   final name = TextEditingController();
   final phone = TextEditingController();
   final form = GlobalKey<FormState>();
-  TrackerDevice? device;
-  String? result;
-  String? pending;
-  Timer? connectionCheck;
-
-  bool get ready => device?.profileEnabled == true && pending == null;
+  int step = 0;
 
   @override
   void initState() {
     super.initState();
-    connectionCheck = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (device != null && !usb.connected) {
-        setState(() {
-          device = null;
-          phone.clear();
-          result = pending == 'TEST' ? 'sms_unknown' : 'disconnected';
-        });
+    session.addListener(refresh);
+  }
+
+  void refresh() {
+    setState(() {
+      if (session.device == null) {
+        step = 0;
+        phone.clear();
+        name.clear();
       }
     });
   }
 
   @override
   void dispose() {
-    connectionCheck?.cancel();
-    unawaited(usb.disconnect());
+    session.removeListener(refresh);
+    session.dispose();
     name.dispose();
     phone.dispose();
     super.dispose();
   }
 
   Future<void> run(String action, [String arguments = '']) async {
-    if (pending != null) return;
-    setState(() {
-      pending = action;
-      result = null;
-    });
-    final reply = action == 'CONNECT'
-        ? await usb.connect()
-        : await usb.request(action, arguments);
+    await session.run(action, arguments);
     if (!mounted) return;
-    setState(() {
-      pending = null;
-      result =
-          action == 'TEST' &&
-              {
-                'disconnected',
-                'serial_error',
-                'wrong_device',
-              }.contains(reply.code)
-          ? 'sms_unknown'
-          : reply.code;
-      if (reply.device case final updated?) {
-        device = updated;
-        if (action != 'DIAG') name.text = updated.name;
-      } else if (!usb.connected) {
-        device = null;
-      }
-      if (action == 'SET' || !usb.connected) phone.clear();
-    });
-    if (const {'SET', 'CLEAR', 'TEST'}.contains(action)) {
-      final notice = message(context.strings);
-      if (notice != null) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(notice)));
-      }
+    if (action == 'CONNECT' || action == 'CLEAR') {
+      name.text = session.device?.name ?? '';
     }
-  }
-
-  Future<void> disconnect() async {
-    await usb.disconnect();
-    if (!mounted) return;
-    setState(() {
-      device = null;
-      pending = null;
-      result = null;
-      name.clear();
-      phone.clear();
-    });
+    if (action == 'SET') phone.clear();
   }
 
   Future<bool> confirm(
@@ -157,12 +111,29 @@ class _HardwareSetupScreenState extends State<HardwareSetupScreen> {
           '$number\n\n${s.hardwarePrivate}',
           requireConsent: true,
         ) &&
-        mounted) {
+        mounted &&
+        session.ready) {
       await run('SET', '$number|$trackerName');
     }
   }
 
-  String? message(AppLocalizations s) => switch (result) {
+  Future<void> test() async {
+    final s = context.strings;
+    final instruction = session.device?.testInput == 'slide'
+        ? s.setupSlide
+        : s.setupBoot;
+    if (await confirm(
+          s.hardwareTestTitle,
+          '${s.hardwareTestCopy}\n\n$instruction',
+        ) &&
+        mounted &&
+        session.ready &&
+        session.device?.configured == true) {
+      await run('TEST');
+    }
+  }
+
+  String? message(AppLocalizations s, String? code) => switch (code) {
     null || 'status' => null,
     'saved' => s.hardwareConfigured,
     'cleared' => s.hardwareCleared,
@@ -170,6 +141,7 @@ class _HardwareSetupScreenState extends State<HardwareSetupScreen> {
     'sms_rejected' => s.hardwareRejected,
     'sms_unknown' => s.hardwareUnknownSms,
     'not_registered' => s.hardwareNoNetwork,
+    'sim_unready' => s.setupSimUnready,
     'no_modem' => s.hardwareNoModem,
     'timeout' || 'confirm_timeout' => s.hardwareTimeout,
     'cancelled' => s.hardwareSelectionCancelled,
@@ -186,201 +158,280 @@ class _HardwareSetupScreenState extends State<HardwareSetupScreen> {
     'ready' => s.hardwareReady,
     'registered' => s.hardwareRegistered,
     'not_registered' => s.hardwareNotRegistered,
+    'sim_locked' => s.setupSimLocked,
     'fix' => s.hardwareFix,
     'no_fix' => s.hardwareNoFix,
     'unavailable' => s.hardwareUnavailable,
     _ => s.hardwareNotChecked,
   };
 
+  String contactStatus(AppLocalizations s, TrackerDevice device) =>
+      device.configured ? s.hardwareConfigured : s.hardwareUnconfigured;
+
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    final current = device;
-    final statusText = message(s);
+    final device = session.device;
+    final busy = session.pending != null;
+    final stateMessage = busy
+        ? switch (session.pending) {
+            'TEST' => device?.testInput == 'slide' ? s.setupSlide : s.setupBoot,
+            'SET' || 'CLEAR' => s.hardwarePending,
+            _ => s.hardwareBusy,
+          }
+        : message(s, session.result);
+    final titles = [
+      s.setupConnect,
+      s.setupIdentify,
+      s.setupCellular,
+      s.setupContact,
+      s.setupGnss,
+      s.setupBattery,
+      s.setupSos,
+      s.setupFinish,
+    ];
+    final canAdvance =
+        !busy && device != null && (step != 3 || device.configured);
     return Scaffold(
       appBar: AppBar(title: Text(s.hardwareTitle)),
       body: SafeArea(
         child: PageList(
+          storageKey: ValueKey(step),
           children: [
             SectionHeading(s.hardwareOpen, s.hardwareIntro),
+            Wrap(
+              spacing: SafeSpace.sm,
+              runSpacing: SafeSpace.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Tag(s.setupStep(step + 1), Icons.checklist),
+                Tag(
+                  device == null ? s.hardwareDisconnected : s.hardwareConnected,
+                  Icons.usb,
+                  accent: device == null ? offline : success,
+                ),
+              ],
+            ),
+            const SizedBox(height: SafeSpace.sm),
+            LinearProgressIndicator(value: (step + 1) / titles.length),
+            const SizedBox(height: SafeSpace.lg),
             Panel(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Metric(SafeIcons.tracker, s.hardwareBoard, trackerBoard),
-                  const SizedBox(height: SafeSpace.md),
-                  Tag(
-                    current == null
-                        ? s.hardwareDisconnected
-                        : s.hardwareConnected,
-                    Icons.usb,
-                    accent: current == null ? offline : success,
+                  Semantics(
+                    header: true,
+                    child: Text(titles[step], style: context.type.titleLarge),
                   ),
                   const SizedBox(height: SafeSpace.md),
-                  Text(usb.supported ? s.hardwareSteps : s.hardwareUnsupported),
-                  if (usb.supported) ...[
+                  if (step == 0) ...[
+                    Text(
+                      session.usb.supported
+                          ? s.hardwareSteps
+                          : s.hardwareUnsupported,
+                    ),
                     const SizedBox(height: SafeSpace.md),
-                    if (current == null)
+                    if (session.usb.supported)
                       FilledButton.icon(
-                        onPressed: pending == null
+                        onPressed: busy
+                            ? null
+                            : device == null
                             ? () => run('CONNECT')
-                            : null,
+                            : session.disconnect,
                         icon: const Icon(Icons.usb),
-                        label: Text(s.hardwareConnect),
-                      )
-                    else
-                      OutlinedButton(
-                        onPressed: pending == null ? disconnect : null,
-                        child: Text(s.hardwareDisconnect),
+                        label: Text(
+                          device == null
+                              ? s.hardwareConnect
+                              : s.hardwareDisconnect,
+                        ),
                       ),
+                  ] else if (device != null)
+                    ..._details(s, device),
+                  if (stateMessage != null) ...[
+                    const SizedBox(height: SafeSpace.md),
+                    Semantics(liveRegion: true, child: Text(stateMessage)),
                   ],
                 ],
               ),
             ),
-            if (pending != null || statusText != null) ...[
-              const SizedBox(height: SafeSpace.md),
-              Semantics(
-                liveRegion: true,
-                child: Panel(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        pending == null
-                            ? statusText!
-                            : {'SET', 'CLEAR', 'TEST'}.contains(pending)
-                            ? s.hardwarePending
-                            : s.hardwareBusy,
-                      ),
-                      if (pending != null) ...[
-                        const SizedBox(height: SafeSpace.sm),
-                        const LinearProgressIndicator(),
-                      ],
-                    ],
+            const SizedBox(height: SafeSpace.md),
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: SafeSpace.sm,
+              runSpacing: SafeSpace.sm,
+              children: [
+                if (step > 0)
+                  OutlinedButton(
+                    onPressed: busy ? null : () => setState(() => step -= 1),
+                    child: Text(s.setupPrevious),
                   ),
-                ),
-              ),
-            ],
-            if (current != null) ...[
-              const SizedBox(height: SafeSpace.md),
-              Panel(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MetricGrid(
-                      metrics: [
-                        Metric(Icons.memory, s.firmware, current.firmware),
-                        Metric(
-                          Icons.contact_phone_outlined,
-                          s.hardwareConfig,
-                          current.configured
-                              ? s.hardwareConfigured
-                              : s.hardwareUnconfigured,
-                        ),
-                        Metric(
-                          Icons.settings_input_component_outlined,
-                          s.hardwareModem,
-                          diagnostic(s, current.modem),
-                        ),
-                        Metric(
-                          SafeIcons.network,
-                          s.network,
-                          diagnostic(s, current.network),
-                        ),
-                        Metric(
-                          SafeIcons.accuracy,
-                          s.hardwareGnss,
-                          diagnostic(s, current.gnss),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: SafeSpace.md),
-                    if (!current.profileEnabled) Text(s.hardwareLocked),
-                    OutlinedButton(
-                      onPressed: ready ? () => run('DIAG') : null,
-                      child: Text(s.hardwareDiagnostics),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: SafeSpace.md),
-              Panel(
-                child: Form(
-                  key: form,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextFormField(
-                        enabled: ready,
-                        controller: name,
-                        autofillHints: null,
-                        decoration: InputDecoration(labelText: s.hardwareName),
-                        validator: (value) => isTrackerName(value?.trim() ?? '')
-                            ? null
-                            : s.hardwareNameInvalid,
-                      ),
-                      const SizedBox(height: SafeSpace.md),
-                      TextFormField(
-                        enabled: ready,
-                        controller: phone,
-                        autofillHints: null,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(labelText: s.hardwarePhone),
-                        validator: (value) =>
-                            isInternationalPhone(value?.trim() ?? '')
-                            ? null
-                            : s.hardwarePhoneInvalid,
-                      ),
-                      const SizedBox(height: SafeSpace.sm),
-                      Text(s.hardwarePhoneHint),
-                      const SizedBox(height: SafeSpace.sm),
-                      Text(s.hardwarePrivate),
-                      const SizedBox(height: SafeSpace.md),
-                      FilledButton(
-                        onPressed: ready ? save : null,
-                        child: Text(s.hardwareSave),
-                      ),
-                      if (current.configured) ...[
-                        const SizedBox(height: SafeSpace.sm),
-                        FilledButton.tonal(
-                          onPressed: ready
-                              ? () async {
-                                  if (await confirm(
-                                        s.hardwareTestTitle,
-                                        s.hardwareTestCopy,
-                                      ) &&
-                                      mounted) {
-                                    await run('TEST');
-                                  }
-                                }
-                              : null,
-                          child: Text(s.hardwareTest),
-                        ),
-                        OutlinedButton(
-                          onPressed: ready
-                              ? () async {
-                                  if (await confirm(
-                                        s.hardwareClear,
-                                        s.hardwareClearCopy,
-                                      ) &&
-                                      mounted) {
-                                    await run('CLEAR');
-                                  }
-                                }
-                              : null,
-                          child: Text(s.hardwareClear),
-                        ),
-                      ],
-                    ],
+                if (step < titles.length - 1)
+                  FilledButton(
+                    onPressed: canAdvance
+                        ? () => setState(() => step += 1)
+                        : null,
+                    child: Text(s.setupContinue),
+                  )
+                else
+                  FilledButton(
+                    onPressed: busy ? null : () => Navigator.pop(context),
+                    child: Text(s.setupDone),
                   ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _details(AppLocalizations s, TrackerDevice device) {
+    final diagnostics = OutlinedButton(
+      onPressed: session.ready ? () => run('DIAG') : null,
+      child: Text(s.hardwareDiagnostics),
+    );
+    final percent = device.batteryPercent;
+    final millivolts = device.batteryMillivolts;
+    return switch (step) {
+      1 => [
+        MetricGrid(
+          metrics: [
+            Metric(SafeIcons.tracker, s.hardwareBoard, trackerBoard),
+            Metric(Icons.memory, s.firmware, device.firmware),
+          ],
+        ),
+        if (!device.profileEnabled) ...[
+          const SizedBox(height: SafeSpace.md),
+          Text(s.hardwareLocked),
+        ],
+      ],
+      2 => [
+        MetricGrid(
+          metrics: [
+            Metric(
+              Icons.settings_input_component_outlined,
+              s.hardwareModem,
+              diagnostic(s, device.modem),
+            ),
+            Metric(
+              Icons.sim_card_outlined,
+              s.setupSim,
+              diagnostic(s, device.sim),
+            ),
+            Metric(SafeIcons.network, s.network, diagnostic(s, device.network)),
+          ],
+        ),
+        const SizedBox(height: SafeSpace.md),
+        diagnostics,
+      ],
+      3 => [
+        Metric(
+          Icons.contact_phone_outlined,
+          s.hardwareConfig,
+          contactStatus(s, device),
+        ),
+        const SizedBox(height: SafeSpace.md),
+        Form(
+          key: form,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                enabled: session.ready,
+                controller: name,
+                autofillHints: null,
+                decoration: InputDecoration(labelText: s.hardwareName),
+                validator: (value) => isTrackerName(value?.trim() ?? '')
+                    ? null
+                    : s.hardwareNameInvalid,
+              ),
+              const SizedBox(height: SafeSpace.md),
+              TextFormField(
+                enabled: session.ready,
+                controller: phone,
+                autofillHints: null,
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(labelText: s.hardwarePhone),
+                validator: (value) => isInternationalPhone(value?.trim() ?? '')
+                    ? null
+                    : s.hardwarePhoneInvalid,
+              ),
+              const SizedBox(height: SafeSpace.sm),
+              Text(s.hardwarePhoneHint),
+              const SizedBox(height: SafeSpace.sm),
+              Text(s.hardwarePrivate),
+              const SizedBox(height: SafeSpace.md),
+              FilledButton(
+                onPressed: session.ready ? save : null,
+                child: Text(s.hardwareSave),
+              ),
+              if (device.configured)
+                OutlinedButton(
+                  onPressed: session.ready
+                      ? () async {
+                          if (await confirm(
+                                s.hardwareClear,
+                                s.hardwareClearCopy,
+                              ) &&
+                              mounted &&
+                              session.ready) {
+                            await run('CLEAR');
+                          }
+                        }
+                      : null,
+                  child: Text(s.hardwareClear),
+                ),
+            ],
+          ),
+        ),
+      ],
+      4 => [
+        Metric(SafeIcons.accuracy, s.hardwareGnss, diagnostic(s, device.gnss)),
+        const SizedBox(height: SafeSpace.md),
+        Text(s.setupGnssPrivacy),
+        diagnostics,
+      ],
+      5 => [
+        Metric(
+          SafeIcons.battery,
+          s.battery,
+          percent == null ? s.hardwareUnavailable : '$percent%',
+        ),
+        if (millivolts != null)
+          Metric(
+            Icons.bolt_outlined,
+            s.setupVoltage,
+            s.setupMillivolts(millivolts),
+          ),
+        const SizedBox(height: SafeSpace.md),
+        Text(s.setupBatteryHelp),
+        diagnostics,
+      ],
+      6 => [
+        Text(device.testInput == 'slide' ? s.setupSlide : s.setupBoot),
+        const SizedBox(height: SafeSpace.md),
+        FilledButton.tonal(
+          onPressed: session.ready && device.configured ? test : null,
+          child: Text(s.hardwareTest),
+        ),
+      ],
+      _ => [
+        Metric(
+          Icons.contact_phone_outlined,
+          s.hardwareConfig,
+          contactStatus(s, device),
+        ),
+        const SizedBox(height: SafeSpace.md),
+        Metric(
+          SafeIcons.sos,
+          s.setupSos,
+          message(s, session.testResult) ?? s.hardwareNotChecked,
+        ),
+        const SizedBox(height: SafeSpace.md),
+        Text(s.setupFinishHelp),
+      ],
+    };
   }
 }

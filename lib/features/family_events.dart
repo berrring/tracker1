@@ -19,6 +19,8 @@ class FamilyScreen extends StatelessWidget {
       storageKey: const PageStorageKey('family'),
       children: [
         SectionHeading(s.access, s.accessIntro),
+        Text(s.demoFamilyNote),
+        const SizedBox(height: SafeSpace.md),
         for (final (name, role, summary, kind) in members) ...[
           Panel(
             child: Column(
@@ -150,7 +152,7 @@ class EventsScreen extends StatelessWidget {
           const SizedBox(height: SafeSpace.sm),
           if (repo.sosAcknowledged) ...[
             _EventCard(
-              s.now,
+              s.demoEventTime,
               s.demoSuccess,
               s.sosEventDetail,
               SafeIcons.sos,

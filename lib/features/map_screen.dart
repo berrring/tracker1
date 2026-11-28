@@ -84,7 +84,14 @@ class MapScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                StatusTag(status),
+                Wrap(
+                  spacing: SafeSpace.sm,
+                  runSpacing: SafeSpace.xs,
+                  children: [
+                    StatusTag(status),
+                    Tag(s.demoSource, SafeIcons.demo),
+                  ],
+                ),
                 const SizedBox(height: SafeSpace.sm),
                 Semantics(
                   header: true,
@@ -107,12 +114,26 @@ class MapScreen extends StatelessWidget {
                         _ => s.accuracyGood,
                       },
                     ),
-                    Metric(SafeIcons.battery, s.battery, '${repo.battery}%'),
-                    Metric(SafeIcons.network, s.network, networkLabel(s, repo)),
+                    Metric(
+                      status == TrackerStatus.lowBattery
+                          ? SafeIcons.batteryAlert
+                          : SafeIcons.battery,
+                      s.battery,
+                      '${repo.battery}%',
+                    ),
+                    Metric(
+                      repo.isOffline
+                          ? Icons.cloud_off_outlined
+                          : SafeIcons.network,
+                      s.network,
+                      networkLabel(s, repo),
+                    ),
                   ],
                 ),
                 const Divider(height: SafeSpace.xl),
                 Metric(Icons.update, s.lastContact, lastContact(s, repo)),
+                const SizedBox(height: SafeSpace.sm),
+                Text(s.demoMapNote),
               ],
             ),
           ),

@@ -15,7 +15,8 @@ class _Store implements DemoStore {
 }
 
 class _FakeUsb implements TrackerUsb {
-  _FakeUsb({this.supported = true});
+  _FakeUsb({this.supported = true, this.locked = false});
+  final bool locked;
   @override
   final bool supported;
   @override
@@ -24,13 +25,13 @@ class _FakeUsb implements TrackerUsb {
   @override
   Future<TrackerReply> connect() async {
     connected = true;
-    return const TrackerReply(
+    return TrackerReply(
       'status',
       device: TrackerDevice(
         firmware: '0.3.0-bench',
         name: 'Bench',
         configured: true,
-        profileEnabled: true,
+        profileEnabled: !locked,
         modem: 'ready',
         network: 'registered',
         gnss: 'no_fix',
@@ -113,10 +114,43 @@ void main() {
     expect(TrackerReply.decode('{"code":"sms_unknown"}').device, isNull);
   });
 
+  test('invalid and missing battery readings stay unavailable', () {
+    const payload =
+        '{"code":"status","protocol":1,"board":"ESP32-S3-A7670E-4G",'
+        '"firmware":"bench","name":"","configured":false,"profile":true,'
+        '"modem":"ready","network":"registered","gnss":"no_fix"';
+    final invalid = TrackerReply.decode(
+      '$payload,"batteryPercent":110,"batteryMillivolts":0}',
+    ).device!;
+    expect(invalid.batteryPercent, isNull);
+    expect(invalid.batteryMillivolts, isNull);
+    final valid = TrackerReply.decode(
+      '$payload,"batteryPercent":42,"batteryMillivolts":3650,"testInput":"slide"}',
+    ).device!;
+    expect(valid.batteryPercent, 42);
+    expect(valid.batteryMillivolts, 3650);
+    expect(valid.testInput, 'slide');
+  });
+
   testWidgets('unsupported browser offers local fallback', (tester) async {
     await _open(tester, _FakeUsb(supported: false));
     expect(find.textContaining('локальную утилиту'), findsOneWidget);
     expect(find.text('Выбрать USB-порт'), findsNothing);
+  });
+
+  testWidgets('locked board can be identified but cannot save contacts', (
+    tester,
+  ) async {
+    await _open(tester, _FakeUsb(locked: true));
+    await _tap(tester, 'Выбрать USB-порт');
+    await _tap(tester, 'Далее');
+    expect(find.textContaining('профиль выключен'), findsOneWidget);
+    await _tap(tester, 'Далее');
+    await _tap(tester, 'Далее');
+    final save = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, 'Проверить и записать контакт'),
+    );
+    expect(save.onPressed, isNull);
   });
 
   testWidgets('device status is separate and SMS rejection stays visible', (
@@ -125,8 +159,11 @@ void main() {
     await _open(tester, _FakeUsb());
     await _tap(tester, 'Выбрать USB-порт');
     expect(find.text('USB подключён'), findsOneWidget);
+    await _tap(tester, 'Далее');
     expect(find.text('0.3.0-bench'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Отправить тестовое SMS'), 250);
+    for (var i = 0; i < 5; i++) {
+      await _tap(tester, 'Далее');
+    }
     await _tap(tester, 'Отправить тестовое SMS');
     expect(find.textContaining('SafeTrack bench test'), findsOneWidget);
     await _tap(tester, 'Подтвердить тестовое SMS');
@@ -134,5 +171,20 @@ void main() {
       find.text('Модем отклонил тестовое SMS.').hitTestable(),
       findsOneWidget,
     );
+  });
+
+  testWidgets('unplug resets the wizard and removes device diagnostics', (
+    tester,
+  ) async {
+    final usb = _FakeUsb();
+    await _open(tester, usb);
+    await _tap(tester, 'Выбрать USB-порт');
+    await _tap(tester, 'Далее');
+    expect(find.text('0.3.0-bench'), findsOneWidget);
+    usb.connected = false;
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.text('Шаг 1 из 8'), findsOneWidget);
+    expect(find.text('0.3.0-bench'), findsNothing);
   });
 }

@@ -1,6 +1,6 @@
 # SafeTrack Family
 
-SafeTrack Family is a Russian-first Flutter prototype for a family safety tracker on Android, iOS and web. It opens on a local, illustrated map of a fictional neighborhood. Every person, position, device ID, event and SOS result is demo data. The app never sends a real SOS.
+SafeTrack Family is a Russian-first Flutter prototype for a family safety tracker on Android, iOS and web. Its map, family members and events are fictional. A separate USB bench wizard can read device diagnostics and request a fixed test SMS with local approval.
 
 ## Run locally
 
@@ -12,7 +12,7 @@ flutter gen-l10n
 flutter run
 ```
 
-Select the Android target when prompted. To run iOS, use macOS with Xcode and an iOS simulator or device. The app uses Flutter's Material 3 widgets and has no backend, tracker hardware, runtime API key or secret. SDK and package downloads may require network access during setup.
+Select the Android target when prompted. To run iOS, use macOS with Xcode and an iOS simulator or device. The app uses Flutter's Material 3 widgets and runs locally. SDK and package downloads may require network access during setup.
 
 To build a debug APK for an ARM64 Android device, run `flutter build apk --debug --target-platform android-arm64`. On macOS, `flutter build ios --no-codesign` checks the iOS build without code signing.
 
@@ -26,7 +26,7 @@ For a browser demo, run `flutter run -d chrome`. The production bundle in `publi
 - **Устройство → Демо-сценарий** switches among fresh, stale, offline, low battery, SOS, loading, empty, unavailable and error. The selected scenario is shared by the screens.
 - **Устройство → Тестовый SOS** demonstrates preparation, sending and simulated acknowledgement. With **Нет связи** selected, the flow shows an unconfirmed result and the time of last contact.
 - Web demo state, notification choices and language are stored locally in the browser. Native targets keep demo state in the current session.
-- **Устройство → Физический трекер** opens the separate USB setup. Real hardware contact and diagnostics never enter the demo map or browser storage.
+- **Устройство → Физический трекер** opens the eight-step USB wizard for board identification, SIM and modem checks, contact setup, GNSS, battery and local test approval. Use the serial utility on platforms without Web Serial. The demo map and browser storage contain only demo data and preferences.
 
 ## Source and localization
 

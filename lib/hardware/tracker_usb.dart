@@ -61,9 +61,20 @@ class TrackerReply {
         modem: value['modem'] as String,
         network: value['network'] as String,
         gnss: value['gnss'] as String,
+        sim: value['sim'] is String ? value['sim'] as String : 'not_checked',
+        testInput: switch (value['testInput']) {
+          'slide' => 'slide',
+          'boot' => 'boot',
+          _ => value['profile'] == true ? 'boot' : 'unavailable',
+        },
+        batteryPercent: _reading(value['batteryPercent'], 0, 100),
+        batteryMillivolts: _reading(value['batteryMillivolts'], 2500, 4500),
       ),
     );
   }
+
+  static int? _reading(Object? value, int min, int max) =>
+      value is int && value >= min && value <= max ? value : null;
 }
 
 class TrackerDevice {
@@ -75,6 +86,10 @@ class TrackerDevice {
     required this.modem,
     required this.network,
     required this.gnss,
+    this.sim = 'not_checked',
+    this.testInput = 'boot',
+    this.batteryPercent,
+    this.batteryMillivolts,
   });
   final String firmware;
   final String name;
@@ -83,4 +98,8 @@ class TrackerDevice {
   final String modem;
   final String network;
   final String gnss;
+  final String sim;
+  final String testInput;
+  final int? batteryPercent;
+  final int? batteryMillivolts;
 }

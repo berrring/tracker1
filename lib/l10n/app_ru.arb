@@ -130,7 +130,7 @@
   "hardwareDisconnected": "USB не подключён",
   "hardwareConnected": "USB подключён",
   "hardwareUnsupported": "Выбор USB недоступен. Используйте Chrome или Edge на компьютере либо локальную утилиту из HARDWARE_SETUP.md.",
-  "hardwareSteps": "Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3. При запросе нажмите BOOT на плате в течение 20 секунд.",
+  "hardwareSteps": "Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3.",
   "hardwareBoard": "Модель платы",
   "hardwareName": "Имя устройства",
   "hardwarePhone": "Номер для тестового SOS",
@@ -159,7 +159,7 @@
   "hardwareBusy": "Выполняется проверка USB или диагностика.",
   "hardwareTest": "Отправить тестовое SMS",
   "hardwareTestTitle": "Подтвердить тестовое SMS",
-  "hardwareTestCopy": "Плата отправит на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату. Для отправки нажмите BOOT.",
+  "hardwareTestCopy": "Плата попробует отправить на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату.",
   "hardwareClear": "Удалить контакт с платы",
   "hardwareClearCopy": "Номер будет удалён с платы после нажатия BOOT.",
   "hardwareCleared": "Контакт удалён с платы.",
@@ -173,5 +173,46 @@
   "hardwareStorage": "Плата не подтвердила запись в память.",
   "hardwareNoModem": "Модем не ответил. Проверьте питание и переключатели.",
   "hardwareSelectionCancelled": "Выбор USB-порта отменён.",
-  "notifyDetailWeb": "Настройки сохраняются в этом браузере."
+  "notifyDetailWeb": "Настройки сохраняются в этом браузере.",
+  "setupConnect": "Подключите устройство",
+  "setupIdentify": "Проверьте плату и прошивку",
+  "setupCellular": "Проверьте SIM и модем",
+  "setupContact": "Настройте контакт",
+  "setupGnss": "Проверьте GNSS",
+  "setupBattery": "Проверьте аккумулятор",
+  "setupSos": "Проверьте тестовый SOS",
+  "setupFinish": "Итоги настройки",
+  "setupPrevious": "Предыдущий шаг",
+  "setupContinue": "Далее",
+  "setupDone": "Выйти из настройки",
+  "setupSim": "SIM-карта",
+  "setupSimLocked": "SIM не готова или заблокирована",
+  "setupSimUnready": "SIM не готова. Тестовое SMS не отправлено.",
+  "setupSlide": "После подтверждения удержите OFF не менее 250 мс, затем ON не менее 1,5 с. Окно подтверждения — 20 с.",
+  "setupBoot": "После подтверждения нажмите и отпустите BOOT на плате в течение 20 с.",
+  "setupGnssPrivacy": "На экране только статус фиксации. Координаты платы не считываются приложением.",
+  "setupBatteryHelp": "Процент и напряжение появляются после ответа датчика платы. Если результата нет, данные недоступны.",
+  "setupVoltage": "Напряжение",
+  "setupFinishHelp": "Результат теста означает ответ модема. Получение сообщения проверяется отдельно на телефоне контакта.",
+  "demoSource": "Учебные данные",
+  "demoMapNote": "Эта точка создана для демонстрации и не получена с физического трекера.",
+  "demoFamilyNote": "Доступ показан на вымышленной семье. Физический трекер настраивается отдельно по USB.",
+  "demoEventTime": "Демо-журнал",
+  "demoDeviceNotice": "USB для платы и диагностики. Показатели ниже относятся к демо.",
+  "setupStep": "Шаг {number} из 8",
+  "setupMillivolts": "{number} мВ",
+  "@setupStep": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "@setupMillivolts": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  }
 }

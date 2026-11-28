@@ -6,15 +6,18 @@
 - Added a default-locked baseline/V2 firmware profile, explicit local SOS approval with debounce and hold, SIM diagnostics and optional MAX17048 readings.
 - Implemented eight-step USB setup, optional diagnostic fields for older firmware, local serial fallback and clearer demo labels.
 
-## In progress
+## Software verification
 
-- Verify the host SOS switch tests and Flutter tests, then rebuild the Android APK and deployment files in public/.
-- Exercise the production web build and verify the authorized GitHub refs.
+- Flutter analysis passed and all 21 tests passed, including offline SOS, pairing, invalid configuration, missing battery data, disabled profile and USB disconnection.
+- Web release built and 34 files were synced into `public/`. Inspected the production bundle in Chromium at 1280 × 820 and 390 × 844. Checked the map, events, family, device, demo SOS, pairing, disconnected wizard and `/#/hardware` reload. Connected wizard states use test fixtures.
+- Android ARM64 debug build passed. Local APK: `build/app/outputs/flutter-apk/app-debug.apk`.
+- Arduino CLI compiled profiles 0, 1 and 2 with ESP32 core 3.3.12. The host C++ switch tests passed. The serial helper starts with pyserial 3.5.
+- Firmware checkpoint pushed and verified on `checkpoint/04-slide-wizard` at `81f7da6c926d7717b3745df86694c6f36b6da85d`.
 
 ## Known issues and next steps
 
 - The physical PCB revision, modem variant and external switch wiring remain unconfirmed. Identify and inspect them against [HARDWARE_SETUP.md](HARDWARE_SETUP.md) before enabling a profile.
 - Keep `SAFETRACK_VERIFIED_PROFILE=0` and `SAFETRACK_SOS_PIN=-1` until verification. No firmware was flashed.
-- After local verification, run `flutter build web --release --no-web-resources-cdn` and `python tools/prepare_public.py`, audit staged data, then fast-forward and verify `origin/main`.
-- The existing Vercel project uses the GitHub integration. Preserve vercel.json and confirm the deployed commit in Vercel if accessible.
-- Android device execution and iOS execution remain separate checks. iOS requires macOS and Xcode.
+- After the physical review and explicit flash authorization, build the matching profile, then follow the manual bench checks in HARDWARE_SETUP.md. Record modem acceptance and handset receipt separately.
+- Run the Android APK on a device. Use macOS and Xcode for `flutter build ios --no-codesign` and iOS execution.
+- For future web changes, run `flutter build web --release --no-web-resources-cdn` then `python tools/prepare_public.py`. Vercel uses the existing GitHub integration and unchanged `vercel.json`. Confirm the deployed commit in Vercel.

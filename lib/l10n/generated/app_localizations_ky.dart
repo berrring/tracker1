@@ -420,7 +420,7 @@ class AppLocalizationsKy extends AppLocalizations {
 
   @override
   String get hardwareSteps =>
-      'Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3. При запросе нажмите BOOT на плате в течение 20 секунд.';
+      'Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3.';
 
   @override
   String get hardwareBoard => 'Модель платы';
@@ -515,7 +515,7 @@ class AppLocalizationsKy extends AppLocalizations {
 
   @override
   String get hardwareTestCopy =>
-      'Плата отправит на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату. Для отправки нажмите BOOT.';
+      'Плата попробует отправить на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату.';
 
   @override
   String get hardwareClear => 'Удалить контакт с платы';
@@ -566,4 +566,97 @@ class AppLocalizationsKy extends AppLocalizations {
 
   @override
   String get notifyDetailWeb => 'Настройки сохраняются в этом браузере.';
+
+  @override
+  String get setupConnect => 'Подключите устройство';
+
+  @override
+  String get setupIdentify => 'Проверьте плату и прошивку';
+
+  @override
+  String get setupCellular => 'Проверьте SIM и модем';
+
+  @override
+  String get setupContact => 'Настройте контакт';
+
+  @override
+  String get setupGnss => 'Проверьте GNSS';
+
+  @override
+  String get setupBattery => 'Проверьте аккумулятор';
+
+  @override
+  String get setupSos => 'Проверьте тестовый SOS';
+
+  @override
+  String get setupFinish => 'Итоги настройки';
+
+  @override
+  String get setupPrevious => 'Предыдущий шаг';
+
+  @override
+  String get setupContinue => 'Далее';
+
+  @override
+  String get setupDone => 'Выйти из настройки';
+
+  @override
+  String get setupSim => 'SIM-карта';
+
+  @override
+  String get setupSimLocked => 'SIM не готова или заблокирована';
+
+  @override
+  String get setupSimUnready => 'SIM не готова. Тестовое SMS не отправлено.';
+
+  @override
+  String get setupSlide =>
+      'После подтверждения удержите OFF не менее 250 мс, затем ON не менее 1,5 с. Окно подтверждения — 20 с.';
+
+  @override
+  String get setupBoot =>
+      'После подтверждения нажмите и отпустите BOOT на плате в течение 20 с.';
+
+  @override
+  String get setupGnssPrivacy =>
+      'На экране только статус фиксации. Координаты платы не считываются приложением.';
+
+  @override
+  String get setupBatteryHelp =>
+      'Процент и напряжение появляются после ответа датчика платы. Если результата нет, данные недоступны.';
+
+  @override
+  String get setupVoltage => 'Напряжение';
+
+  @override
+  String get setupFinishHelp =>
+      'Результат теста означает ответ модема. Получение сообщения проверяется отдельно на телефоне контакта.';
+
+  @override
+  String get demoSource => 'Учебные данные';
+
+  @override
+  String get demoMapNote =>
+      'Эта точка создана для демонстрации и не получена с физического трекера.';
+
+  @override
+  String get demoFamilyNote =>
+      'Доступ показан на вымышленной семье. Физический трекер настраивается отдельно по USB.';
+
+  @override
+  String get demoEventTime => 'Демо-журнал';
+
+  @override
+  String get demoDeviceNotice =>
+      'USB для платы и диагностики. Показатели ниже относятся к демо.';
+
+  @override
+  String setupStep(int number) {
+    return 'Шаг $number из 8';
+  }
+
+  @override
+  String setupMillivolts(int number) {
+    return '$number мВ';
+  }
 }

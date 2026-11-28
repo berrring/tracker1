@@ -884,7 +884,7 @@ abstract class AppLocalizations {
   /// No description provided for @hardwareSteps.
   ///
   /// In ru, this message translates to:
-  /// **'Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3. При запросе нажмите BOOT на плате в течение 20 секунд.'**
+  /// **'Подключите ESP32-S3 кабелем передачи данных. Закройте Arduino Serial Monitor и выберите порт ESP32-S3.'**
   String get hardwareSteps;
 
   /// No description provided for @hardwareBoard.
@@ -1058,7 +1058,7 @@ abstract class AppLocalizations {
   /// No description provided for @hardwareTestCopy.
   ///
   /// In ru, this message translates to:
-  /// **'Плата отправит на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату. Для отправки нажмите BOOT.'**
+  /// **'Плата попробует отправить на сохранённый номер сообщение «SafeTrack bench test. No emergency.». Оператор может взять плату.'**
   String get hardwareTestCopy;
 
   /// No description provided for @hardwareClear.
@@ -1144,6 +1144,168 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Настройки сохраняются в этом браузере.'**
   String get notifyDetailWeb;
+
+  /// No description provided for @setupConnect.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подключите устройство'**
+  String get setupConnect;
+
+  /// No description provided for @setupIdentify.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте плату и прошивку'**
+  String get setupIdentify;
+
+  /// No description provided for @setupCellular.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте SIM и модем'**
+  String get setupCellular;
+
+  /// No description provided for @setupContact.
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройте контакт'**
+  String get setupContact;
+
+  /// No description provided for @setupGnss.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте GNSS'**
+  String get setupGnss;
+
+  /// No description provided for @setupBattery.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте аккумулятор'**
+  String get setupBattery;
+
+  /// No description provided for @setupSos.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте тестовый SOS'**
+  String get setupSos;
+
+  /// No description provided for @setupFinish.
+  ///
+  /// In ru, this message translates to:
+  /// **'Итоги настройки'**
+  String get setupFinish;
+
+  /// No description provided for @setupPrevious.
+  ///
+  /// In ru, this message translates to:
+  /// **'Предыдущий шаг'**
+  String get setupPrevious;
+
+  /// No description provided for @setupContinue.
+  ///
+  /// In ru, this message translates to:
+  /// **'Далее'**
+  String get setupContinue;
+
+  /// No description provided for @setupDone.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выйти из настройки'**
+  String get setupDone;
+
+  /// No description provided for @setupSim.
+  ///
+  /// In ru, this message translates to:
+  /// **'SIM-карта'**
+  String get setupSim;
+
+  /// No description provided for @setupSimLocked.
+  ///
+  /// In ru, this message translates to:
+  /// **'SIM не готова или заблокирована'**
+  String get setupSimLocked;
+
+  /// No description provided for @setupSimUnready.
+  ///
+  /// In ru, this message translates to:
+  /// **'SIM не готова. Тестовое SMS не отправлено.'**
+  String get setupSimUnready;
+
+  /// No description provided for @setupSlide.
+  ///
+  /// In ru, this message translates to:
+  /// **'После подтверждения удержите OFF не менее 250 мс, затем ON не менее 1,5 с. Окно подтверждения — 20 с.'**
+  String get setupSlide;
+
+  /// No description provided for @setupBoot.
+  ///
+  /// In ru, this message translates to:
+  /// **'После подтверждения нажмите и отпустите BOOT на плате в течение 20 с.'**
+  String get setupBoot;
+
+  /// No description provided for @setupGnssPrivacy.
+  ///
+  /// In ru, this message translates to:
+  /// **'На экране только статус фиксации. Координаты платы не считываются приложением.'**
+  String get setupGnssPrivacy;
+
+  /// No description provided for @setupBatteryHelp.
+  ///
+  /// In ru, this message translates to:
+  /// **'Процент и напряжение появляются после ответа датчика платы. Если результата нет, данные недоступны.'**
+  String get setupBatteryHelp;
+
+  /// No description provided for @setupVoltage.
+  ///
+  /// In ru, this message translates to:
+  /// **'Напряжение'**
+  String get setupVoltage;
+
+  /// No description provided for @setupFinishHelp.
+  ///
+  /// In ru, this message translates to:
+  /// **'Результат теста означает ответ модема. Получение сообщения проверяется отдельно на телефоне контакта.'**
+  String get setupFinishHelp;
+
+  /// No description provided for @demoSource.
+  ///
+  /// In ru, this message translates to:
+  /// **'Учебные данные'**
+  String get demoSource;
+
+  /// No description provided for @demoMapNote.
+  ///
+  /// In ru, this message translates to:
+  /// **'Эта точка создана для демонстрации и не получена с физического трекера.'**
+  String get demoMapNote;
+
+  /// No description provided for @demoFamilyNote.
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ показан на вымышленной семье. Физический трекер настраивается отдельно по USB.'**
+  String get demoFamilyNote;
+
+  /// No description provided for @demoEventTime.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо-журнал'**
+  String get demoEventTime;
+
+  /// No description provided for @demoDeviceNotice.
+  ///
+  /// In ru, this message translates to:
+  /// **'USB для платы и диагностики. Показатели ниже относятся к демо.'**
+  String get demoDeviceNotice;
+
+  /// No description provided for @setupStep.
+  ///
+  /// In ru, this message translates to:
+  /// **'Шаг {number} из 8'**
+  String setupStep(int number);
+
+  /// No description provided for @setupMillivolts.
+  ///
+  /// In ru, this message translates to:
+  /// **'{number} мВ'**
+  String setupMillivolts(int number);
 }
 
 class _AppLocalizationsDelegate

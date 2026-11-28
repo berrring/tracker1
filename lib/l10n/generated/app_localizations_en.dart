@@ -421,7 +421,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hardwareSteps =>
-      'Connect the ESP32-S3 with a data cable, close Arduino Serial Monitor and choose the ESP32-S3 port. When prompted, press BOOT within 20 seconds.';
+      'Connect the ESP32-S3 using a data cable. Close Arduino Serial Monitor and choose the ESP32-S3 port.';
 
   @override
   String get hardwareBoard => 'Board model';
@@ -516,7 +516,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hardwareTestCopy =>
-      'The device will send “SafeTrack bench test. No emergency.” to the saved number. Carrier charges may apply. Sending requires a BOOT press.';
+      'The board will attempt to send “SafeTrack bench test. No emergency.” to the saved contact. Carrier charges may apply.';
 
   @override
   String get hardwareClear => 'Clear contact from device';
@@ -568,4 +568,98 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifyDetailWeb => 'Preferences are saved in this browser.';
+
+  @override
+  String get setupConnect => 'Connect the tracker';
+
+  @override
+  String get setupIdentify => 'Identify the board and firmware';
+
+  @override
+  String get setupCellular => 'Check SIM and modem';
+
+  @override
+  String get setupContact => 'Set the emergency contact';
+
+  @override
+  String get setupGnss => 'Check GNSS';
+
+  @override
+  String get setupBattery => 'Check the battery';
+
+  @override
+  String get setupSos => 'Run a local SOS test';
+
+  @override
+  String get setupFinish => 'Setup summary';
+
+  @override
+  String get setupPrevious => 'Previous step';
+
+  @override
+  String get setupContinue => 'Continue';
+
+  @override
+  String get setupDone => 'Close setup';
+
+  @override
+  String get setupSim => 'SIM card';
+
+  @override
+  String get setupSimLocked => 'SIM is locked or unavailable';
+
+  @override
+  String get setupSimUnready =>
+      'SIM is not ready. A test SMS was not submitted.';
+
+  @override
+  String get setupSlide =>
+      'After confirming, keep the switch OFF for at least 250 ms, then ON for at least 1.5 s. The approval window is 20 s.';
+
+  @override
+  String get setupBoot =>
+      'After confirming, press and release BOOT within 20 s.';
+
+  @override
+  String get setupGnssPrivacy =>
+      'Only fix status is shown. The app does not read the tracker’s coordinates.';
+
+  @override
+  String get setupBatteryHelp =>
+      'Charge and voltage appear after the board reports readings. Otherwise they are unavailable.';
+
+  @override
+  String get setupVoltage => 'Voltage';
+
+  @override
+  String get setupFinishHelp =>
+      'The test result reflects the modem response. Check message receipt separately on the contact’s phone.';
+
+  @override
+  String get demoSource => 'Demo data';
+
+  @override
+  String get demoMapNote =>
+      'This position is illustrative and was not read from a physical tracker.';
+
+  @override
+  String get demoFamilyNote =>
+      'Access is illustrated with a fictional family. Configure a physical tracker separately over USB.';
+
+  @override
+  String get demoEventTime => 'Demo history';
+
+  @override
+  String get demoDeviceNotice =>
+      'USB for board setup and diagnostics. The readings below are simulated.';
+
+  @override
+  String setupStep(int number) {
+    return 'Step $number of 8';
+  }
+
+  @override
+  String setupMillivolts(int number) {
+    return '$number mV';
+  }
 }

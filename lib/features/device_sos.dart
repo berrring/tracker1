@@ -23,7 +23,7 @@ class DeviceScreen extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.usb),
             title: Text(s.hardwareTitle),
-            subtitle: Text(s.hardwareOpen),
+            subtitle: Text(s.demoDeviceNotice),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.pushNamed(context, '/hardware'),
           ),
@@ -77,11 +77,27 @@ class DeviceScreen extends StatelessWidget {
         ),
         const SizedBox(height: SafeSpace.md),
         if (repo.hasDeviceData) ...[
+          FilledButton.tonalIcon(
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (_) => SosDialog(repo: repo),
+            ),
+            icon: const Icon(SafeIcons.sos),
+            label: Text(s.sos),
+          ),
+          const SizedBox(height: SafeSpace.md),
           Panel(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                StatusTag(status),
+                Wrap(
+                  spacing: SafeSpace.sm,
+                  runSpacing: SafeSpace.xs,
+                  children: [
+                    StatusTag(status),
+                    Tag(s.demoSource, SafeIcons.demo),
+                  ],
+                ),
                 const SizedBox(height: SafeSpace.sm),
                 Text(s.tracker, style: context.type.headlineMedium),
                 const SizedBox(height: SafeSpace.xs),
@@ -91,23 +107,26 @@ class DeviceScreen extends StatelessWidget {
                 const Divider(height: 24),
                 MetricGrid(
                   metrics: [
-                    Metric(SafeIcons.battery, s.battery, '${repo.battery}%'),
-                    Metric(SafeIcons.network, s.network, networkLabel(s, repo)),
+                    Metric(
+                      status == TrackerStatus.lowBattery
+                          ? SafeIcons.batteryAlert
+                          : SafeIcons.battery,
+                      s.battery,
+                      '${repo.battery}%',
+                    ),
+                    Metric(
+                      repo.isOffline
+                          ? Icons.cloud_off_outlined
+                          : SafeIcons.network,
+                      s.network,
+                      networkLabel(s, repo),
+                    ),
                     Metric(SafeIcons.time, s.lastContact, lastContact(s, repo)),
                     Metric(Icons.memory_outlined, s.firmware, s.firmwareValue),
                   ],
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: SafeSpace.md),
-          FilledButton.tonalIcon(
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (_) => SosDialog(repo: repo),
-            ),
-            icon: const Icon(SafeIcons.sos),
-            label: Text(s.sos),
           ),
           const SizedBox(height: SafeSpace.md),
         ] else ...[

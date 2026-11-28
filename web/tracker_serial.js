@@ -78,7 +78,7 @@ window.safeTrackSerial = (() => {
     }
     const prefix = 'ST1 ' + (++nextId) + ' ';
     const timeout = command === 'TEST' ? 125000 :
-      ['SET', 'CLEAR'].includes(command) ? 25000 : command === 'DIAG' ? 15000 : 4500;
+      ['SET', 'CLEAR'].includes(command) ? 25000 : command === 'DIAG' ? 22000 : 4500;
     return new Promise(resolve => {
       pending = {prefix, resolve, timer: setTimeout(() => {
         // Stop accepting replies for this request. An SMS result may be unknown.
