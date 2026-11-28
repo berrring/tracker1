@@ -1,8 +1,11 @@
 # Checkpoint 06 — Supabase family accounts
 
 - Authenticated Supabase MCP inspection confirmed an empty public schema. The security advisor flagged API execution grants for the existing RLS event trigger helper.
-- Versioned the family-account schema, permissions, RLS and restricted RPCs. PostgreSQL 16 tests passed using fictional identities and transaction rollback.
-- Next: apply the reviewed migration through MCP, verify hosted RLS and security advisors, finish Flutter regression and release checks, and validate auth configuration.
+- Applied `20261128033552_family_accounts.sql` through MCP. The hosted migration history records the same version. Verified eight RLS-protected tables, no anonymous table read grants, and an empty security-advisor report after revoking the existing helper's API permissions.
+- PostgreSQL 16 policy assertions passed with fictional identities and transaction rollback. Hosted anonymous family reads returned HTTP 401. Local Supabase Auth and Mailpit passed email confirmation, login, refresh-token restoration, recovery and password replacement.
+- Flutter analysis and 25 tests passed. The account-enabled Web release rebuilt `public/`, and the account callback route rendered in Chromium. Hosted Auth has email signup and confirmation enabled. The production Site URL and exact Web and native redirect URLs were saved and verified.
+- Source checkpoint `97bcd6e47c7ac31f3333c61f703e15986e29b63c` was pushed and verified on `checkpoint/06-family-accounts`.
+- Next: run the hosted two-account smoke test in DEPLOYMENT.md with authorized test inboxes, including browser reload and email receipt. Verify the native callbacks on Android and iOS before wider rollout. The Accounts workspace currently uses English.
 
 # Checkpoint 05 — SafeTrack dashboard redesign
 

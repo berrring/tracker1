@@ -36,6 +36,17 @@ python -m http.server 8394 --bind 127.0.0.1 --directory public
 
 Visit `http://127.0.0.1:8394/`. To open hardware setup directly, use `/#/hardware`. Flutter keeps this route in the hash so browser reload retains it. Vercel serves existing assets first and rewrites extensionless paths to the app. Requests for missing files with extensions retain normal 404 behavior.
 
+## Family account configuration
+
+For an accounts-enabled release, pass `--dart-define=SUPABASE_URL=https://wbtugwsqvqjifblkkjmp.supabase.co` and `--dart-define=SUPABASE_PUBLISHABLE_KEY=<project publishable key>` to the Flutter build. Supply the publishable key from your local environment. Only the publishable key belongs in a client bundle. The demo works with these values omitted.
+
+In [Supabase Auth URL Configuration](https://supabase.com/dashboard/project/wbtugwsqvqjifblkkjmp/auth/url-configuration), set the Site URL to `https://tracker1-six.vercel.app` and allow these exact callback URLs:
+
+- Web: `https://tracker1-six.vercel.app/?account=1`
+- Android and iOS: `com.safetrack.family://account`
+
+Enable email confirmation for the Email provider. For a live smoke test, use two authorized isolated email accounts. Confirm signup, sign in, reload, create a family, accept the in-app invitation from the second account, revoke membership as owner and refresh from the second account. Test the reset email and confirm that its link opens the password-change form. Use a permitted SMTP setup for external test addresses.
+
 For an authenticated CLI deployment run these commands from the repository root. Use the project's Git import for automatic redeploys.
 
 ```sh

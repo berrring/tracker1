@@ -1,7 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../data/account_repository.dart';
 import '../data/demo_store.dart';
+import '../data/family_repository.dart';
 import '../data/mock_tracker_repository.dart';
+import '../features/accounts_screen.dart';
 import '../features/device_sos.dart';
 import '../features/family_events.dart';
 import '../features/hardware_setup.dart';
@@ -15,15 +18,21 @@ class SafeTrackApp extends StatefulWidget {
     super.key,
     this.repository,
     this.interactiveMaps = false,
+    this.accounts,
+    this.families,
   });
   final MockTrackerRepository? repository;
   final bool interactiveMaps;
+  final AccountRepository? accounts;
+  final FamilyRepository? families;
 
   @override
   State<SafeTrackApp> createState() => _SafeTrackAppState();
 }
 
 class _SafeTrackAppState extends State<SafeTrackApp> {
+  final navigation = GlobalKey<NavigatorState>();
+  bool accountOpen = false;
   final store = browserDemoStore();
   late final repo = widget.repository ?? MockTrackerRepository(store: store);
   late Locale locale = switch (store.read('language')) {
@@ -33,7 +42,23 @@ class _SafeTrackAppState extends State<SafeTrackApp> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    widget.accounts?.addListener(openRecovery);
+  }
+
+  void openRecovery() {
+    if (widget.accounts?.recovering != true || accountOpen) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !accountOpen) {
+        navigation.currentState?.pushNamed('/account');
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    widget.accounts?.removeListener(openRecovery);
     if (widget.repository == null) repo.dispose();
     super.dispose();
   }
@@ -49,8 +74,22 @@ class _SafeTrackAppState extends State<SafeTrackApp> {
       ...GlobalMaterialLocalizations.delegates,
     ],
     supportedLocales: AppLocalizations.supportedLocales,
-    routes: {'/hardware': (_) => const HardwareSetupScreen()},
+    navigatorKey: navigation,
+    initialRoute: Uri.base.queryParameters['account'] == '1'
+        ? '/account'
+        : null,
+    routes: {
+      '/hardware': (_) => const HardwareSetupScreen(),
+      '/account': (_) => _AccountRoute(
+        onVisibilityChanged: (value) => accountOpen = value,
+        child: AccountsScreen(
+          accounts: widget.accounts,
+          families: widget.families,
+        ),
+      ),
+    },
     home: _Shell(
+      accountsEnabled: widget.accounts != null,
       interactiveMaps: widget.interactiveMaps,
       repo: repo,
       locale: locale,
@@ -62,14 +101,42 @@ class _SafeTrackAppState extends State<SafeTrackApp> {
   );
 }
 
+class _AccountRoute extends StatefulWidget {
+  const _AccountRoute({required this.child, required this.onVisibilityChanged});
+  final Widget child;
+  final ValueChanged<bool> onVisibilityChanged;
+
+  @override
+  State<_AccountRoute> createState() => _AccountRouteState();
+}
+
+class _AccountRouteState extends State<_AccountRoute> {
+  @override
+  void initState() {
+    super.initState();
+    widget.onVisibilityChanged(true);
+  }
+
+  @override
+  void dispose() {
+    widget.onVisibilityChanged(false);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
 class _Shell extends StatefulWidget {
   const _Shell({
     required this.repo,
+    required this.accountsEnabled,
     required this.interactiveMaps,
     required this.locale,
     required this.setLocale,
   });
   final MockTrackerRepository repo;
+  final bool accountsEnabled;
   final bool interactiveMaps;
   final Locale locale;
   final ValueChanged<Locale> setLocale;
@@ -115,7 +182,12 @@ class _ShellState extends State<_Shell> {
           onOpenDevice: () => setState(() => tab = 3),
         ),
         1 => EventsScreen(repo: repo),
-        2 => FamilyScreen(onPair: pair),
+        2 => FamilyScreen(
+          onPair: pair,
+          onAccount: widget.accountsEnabled
+              ? () => Navigator.of(context).pushNamed('/account')
+              : null,
+        ),
         _ => DeviceScreen(repo: repo, onPair: pair),
       },
     );

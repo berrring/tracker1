@@ -14,6 +14,7 @@ dependencies:
   intl: any
   maplibre_gl: 0.27.0
   material_ui: ^1.1.0
+  supabase_flutter: ^2.18.3
   web: 1.1.1
 
 dev_dependencies:

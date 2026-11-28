@@ -4,8 +4,9 @@ import '../app/design.dart';
 import '../data/mock_tracker_repository.dart';
 
 class FamilyScreen extends StatelessWidget {
-  const FamilyScreen({super.key, required this.onPair});
+  const FamilyScreen({super.key, required this.onPair, this.onAccount});
   final VoidCallback onPair;
+  final VoidCallback? onAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +98,19 @@ class FamilyScreen extends StatelessWidget {
         const SizedBox(height: SafeSpace.md),
         Text(s.demoFamilyNote),
         const SizedBox(height: SafeSpace.lg),
+        if (onAccount != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: SafeSpace.md),
+            child: OutlinedButton.icon(
+              onPressed: onAccount,
+              icon: const Icon(Icons.account_circle_outlined),
+              label: Text(
+                Localizations.localeOf(context).languageCode == 'en'
+                    ? 'Family account'
+                    : 'Семейный аккаунт',
+              ),
+            ),
+          ),
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: FilledButton.icon(
