@@ -6,9 +6,9 @@
 - Recorded the reported header installation. IO13 and IO14 share the camera interface and remain unassigned. Firmware files are unchanged.
 - Chromium preview rendered OpenFreeMap tiles and attribution and exercised zoom and recenter. Inspected map, events, SOS details, family profiles, pairing, device controls and the disconnected USB wizard at 390, 820 and 1440 px widths.
 - Flutter analysis, 22 widget and unit tests, three MapGL adapter tests, and the final Flutter Web release passed. Rebuilt the 38-file `public/` directory and captured five screens at three widths.
-- Verified source checkpoint `09d658a178c2f215a0ae640f12d3baefc3d45202` on `checkpoint/05-dashboard`.
-- Android moved past the legacy Kotlin integration failure with built-in Kotlin enabled. The build is resolving dependencies. iOS requires macOS and Xcode for native verification.
-- Next: verify the Android result, advance main and confirm that the Vercel production bundle matches the Git commit.
+- Verified source checkpoint `09d658a178c2f215a0ae640f12d3baefc3d45202` and web checkpoint `6223a7068b52636a31916da691f0525a0535d2df` on `checkpoint/05-dashboard`.
+- Android debug assembly succeeded with AGP built-in Kotlin and Android SDK CMake 3.22.1. The APK is at `build/app/outputs/flutter-apk/app-debug.apk`.
+- Next: run the APK on an Android device, build and run iOS on macOS with Xcode, and test live 2GIS using a valid browser-scoped key. Vercel uses the existing static GitHub integration and an empty runtime key file.
 
 # Checkpoint 04 — slide SOS and setup wizard
 
