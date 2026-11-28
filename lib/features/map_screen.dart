@@ -4,168 +4,220 @@ import 'package:material_ui/material_ui.dart';
 
 import '../app/design.dart';
 import '../data/mock_tracker_repository.dart';
+import '../maps/map_model.dart';
+import '../maps/tracker_map.dart';
 
 class MapScreen extends StatelessWidget {
-  const MapScreen({super.key, required this.repo, required this.onPair});
+  const MapScreen({
+    super.key,
+    required this.repo,
+    required this.onPair,
+    required this.interactiveMaps,
+    required this.onOpenDevice,
+  });
   final MockTrackerRepository repo;
   final VoidCallback onPair;
+  final VoidCallback onOpenDevice;
+  final bool interactiveMaps;
 
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
     final status = repo.status;
     final sample = repo.location;
-    return PageList(
-      storageKey: const PageStorageKey('map'),
-      children: [
-        Panel(
-          padding: EdgeInsets.zero,
-          child: ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(SafeRadius.card),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: primaryContainer,
-              foregroundColor: primary,
-              child: Icon(SafeIcons.person),
-            ),
-            title: Text(repo.hasTracker ? s.ayan : s.empty),
-            subtitle: repo.hasTracker ? Text(s.tracker) : null,
-            trailing: const Icon(SafeIcons.expand),
-            onTap: () async {
-              final add = await showModalBottomSheet<bool>(
-                context: context,
-                showDragHandle: true,
-                isScrollControlled: true,
-                useSafeArea: true,
-                builder: (context) => SafeArea(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(
-                      SafeSpace.lg,
-                      0,
-                      SafeSpace.lg,
-                      SafeSpace.lg,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(s.selectTracker, style: context.type.titleLarge),
-                        if (repo.hasTracker)
-                          ListTile(
-                            leading: const Icon(SafeIcons.success),
-                            title: Text(s.tracker),
-                            onTap: () => Navigator.pop(context, false),
-                          ),
-                        TextButton.icon(
-                          icon: const Icon(SafeIcons.addTracker),
-                          onPressed: () => Navigator.pop(context, true),
-                          label: Text(s.add),
-                        ),
-                      ],
-                    ),
-                  ),
+    final selector = Panel(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SafeRadius.card),
+        ),
+        leading: const CircleAvatar(
+          backgroundColor: primaryContainer,
+          foregroundColor: primary,
+          child: Icon(SafeIcons.person),
+        ),
+        title: Text(repo.hasTracker ? s.ayan : s.empty),
+        subtitle: repo.hasTracker ? Text(s.tracker) : null,
+        trailing: const Icon(SafeIcons.expand),
+        onTap: () async {
+          final add = await showModalBottomSheet<bool>(
+            context: context,
+            showDragHandle: true,
+            isScrollControlled: true,
+            useSafeArea: true,
+            builder: (context) => SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  SafeSpace.lg,
+                  0,
+                  SafeSpace.lg,
+                  SafeSpace.lg,
                 ),
-              );
-              if (add == true && context.mounted) onPair();
-            },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(s.selectTracker, style: context.type.titleLarge),
+                    if (repo.hasTracker)
+                      ListTile(
+                        leading: const Icon(SafeIcons.success),
+                        title: Text(s.tracker),
+                        onTap: () => Navigator.pop(context, false),
+                      ),
+                    TextButton.icon(
+                      icon: const Icon(SafeIcons.addTracker),
+                      onPressed: () => Navigator.pop(context, true),
+                      label: Text(s.add),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+          if (add == true && context.mounted) onPair();
+        },
+      ),
+    );
+    final wide =
+        MediaQuery.sizeOf(context).width >= SafeLayout.desktopBreakpoint;
+    final map = SizedBox(
+      key: const ValueKey('dashboard-map'),
+      height: wide
+          ? (MediaQuery.sizeOf(context).height - 135).clamp(400, 760).toDouble()
+          : (MediaQuery.sizeOf(context).height * .43)
+                .clamp(235, 460)
+                .toDouble(),
+      child: TrackerMap(
+        sample: sample,
+        status: status,
+        interactive: interactiveMaps,
+        illustration: DemoMap(sample: sample, status: status),
+      ),
+    );
+    final details = <Widget>[
+      if (sample != null) ...[
+        Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StatusTag(status),
+              const SizedBox(height: SafeSpace.sm),
+              Semantics(
+                header: true,
+                child: Text(s.sample, style: context.type.titleLarge),
+              ),
+              if (status != TrackerStatus.fresh) ...[
+                const SizedBox(height: SafeSpace.xs),
+                Text(status.detail(s)),
+              ],
+              const SizedBox(height: SafeSpace.md),
+              MetricGrid(
+                metrics: [
+                  Metric(SafeIcons.time, s.time, locationTime(s, status)),
+                  Metric(
+                    SafeIcons.accuracy,
+                    s.accuracy,
+                    switch (sample.accuracy) {
+                      32 => s.accuracyStale,
+                      24 => s.accuracyOffline,
+                      _ => s.accuracyGood,
+                    },
+                  ),
+                  Metric(
+                    status == TrackerStatus.lowBattery
+                        ? SafeIcons.batteryAlert
+                        : SafeIcons.battery,
+                    s.battery,
+                    '${repo.battery}%',
+                  ),
+                  Metric(
+                    repo.isOffline
+                        ? Icons.cloud_off_outlined
+                        : SafeIcons.network,
+                    s.network,
+                    networkLabel(s, repo),
+                  ),
+                ],
+              ),
+              const Divider(height: SafeSpace.xl),
+              Metric(Icons.update, s.lastContact, lastContact(s, repo)),
+              const SizedBox(height: SafeSpace.sm),
+              Text(s.mapDemoDetails),
+            ],
           ),
         ),
-        const SizedBox(height: SafeSpace.md),
-        SizedBox(
-          height: (MediaQuery.sizeOf(context).height * .40)
-              .clamp(250, 450)
-              .toDouble(),
-          child: DemoMap(sample: sample, status: status),
+      ] else ...[
+        StatusPanel(
+          status,
+          action: switch (status) {
+            TrackerStatus.empty => FilledButton.icon(
+              onPressed: onPair,
+              icon: const Icon(SafeIcons.addTracker),
+              label: Text(s.add),
+            ),
+            TrackerStatus.error => OutlinedButton(
+              onPressed: () => repo.select(TrackerStatus.fresh),
+              child: Text(s.retry),
+            ),
+            _ => null,
+          },
         ),
-        const SizedBox(height: SafeSpace.md),
-        if (sample != null) ...[
+        if (repo.hasDeviceData) ...[
+          const SizedBox(height: SafeSpace.md),
           Panel(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Wrap(
-                  spacing: SafeSpace.sm,
-                  runSpacing: SafeSpace.xs,
-                  children: [
-                    StatusTag(status),
-                    Tag(s.demoSource, SafeIcons.demo),
-                  ],
-                ),
-                const SizedBox(height: SafeSpace.sm),
-                Semantics(
-                  header: true,
-                  child: Text(s.sample, style: context.type.titleLarge),
-                ),
-                if (status != TrackerStatus.fresh) ...[
-                  const SizedBox(height: SafeSpace.xs),
-                  Text(status.detail(s)),
-                ],
+                Metric(SafeIcons.battery, s.battery, '${repo.battery}%'),
                 const SizedBox(height: SafeSpace.md),
-                MetricGrid(
-                  metrics: [
-                    Metric(SafeIcons.time, s.time, locationTime(s, status)),
-                    Metric(
-                      SafeIcons.accuracy,
-                      s.accuracy,
-                      switch (sample.accuracy) {
-                        32 => s.accuracyStale,
-                        24 => s.accuracyOffline,
-                        _ => s.accuracyGood,
-                      },
-                    ),
-                    Metric(
-                      status == TrackerStatus.lowBattery
-                          ? SafeIcons.batteryAlert
-                          : SafeIcons.battery,
-                      s.battery,
-                      '${repo.battery}%',
-                    ),
-                    Metric(
-                      repo.isOffline
-                          ? Icons.cloud_off_outlined
-                          : SafeIcons.network,
-                      s.network,
-                      networkLabel(s, repo),
-                    ),
-                  ],
-                ),
-                const Divider(height: SafeSpace.xl),
-                Metric(Icons.update, s.lastContact, lastContact(s, repo)),
-                const SizedBox(height: SafeSpace.sm),
-                Text(s.demoMapNote),
+                Metric(SafeIcons.network, s.network, networkLabel(s, repo)),
               ],
             ),
           ),
-        ] else ...[
-          StatusPanel(
-            status,
-            action: switch (status) {
-              TrackerStatus.empty => FilledButton.icon(
-                onPressed: onPair,
-                icon: const Icon(SafeIcons.addTracker),
-                label: Text(s.add),
-              ),
-              TrackerStatus.error => OutlinedButton(
-                onPressed: () => repo.select(TrackerStatus.fresh),
-                child: Text(s.retry),
-              ),
-              _ => null,
-            },
-          ),
-          if (repo.hasDeviceData) ...[
-            const SizedBox(height: SafeSpace.md),
-            Panel(
-              child: Column(
-                children: [
-                  Metric(SafeIcons.battery, s.battery, '${repo.battery}%'),
-                  const SizedBox(height: SafeSpace.md),
-                  Metric(SafeIcons.network, s.network, networkLabel(s, repo)),
-                ],
-              ),
-            ),
-          ],
         ],
+      ],
+    ];
+    if (wide) {
+      return PageList(
+        maxWidth: double.infinity,
+        inset: SafeSpace.xl,
+        storageKey: const PageStorageKey('map'),
+        children: [
+          SectionHeading(s.map, ''),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: map),
+              const SizedBox(width: SafeSpace.lg),
+              SizedBox(
+                width: 308,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    selector,
+                    const SizedBox(height: SafeSpace.md),
+                    ...details,
+                    const SizedBox(height: SafeSpace.md),
+                    OutlinedButton.icon(
+                      onPressed: onOpenDevice,
+                      icon: const Icon(SafeIcons.tracker),
+                      label: Text(s.device),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+    return PageList(
+      storageKey: const PageStorageKey('map'),
+      children: [
+        map,
+        const SizedBox(height: SafeSpace.md),
+        selector,
+        const SizedBox(height: SafeSpace.md),
+        ...details,
       ],
     );
   }
@@ -263,41 +315,53 @@ class _DemoMapState extends State<DemoMap> {
               Positioned(
                 top: 12,
                 left: 12,
-                right: 12,
+                right: 68,
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Material(
                     color: surface,
                     borderRadius: BorderRadius.circular(SafeRadius.map),
-                    child: Tag(s.mapLegend, Icons.layers_outlined),
+                    child: Tag(s.mapLedger, Icons.layers_outlined),
                   ),
                 ),
               ),
-              if (sample != null)
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Material(
-                    color: surface,
-                    elevation: 2,
-                    borderRadius: BorderRadius.circular(SafeRadius.control),
-                    child: IconButton(
-                      constraints: const BoxConstraints(
-                        minWidth: 48,
-                        minHeight: 48,
-                      ),
-                      tooltip: s.recenter,
-                      color: primary,
-                      icon: const Icon(SafeIcons.center),
-                      onPressed: () =>
-                          controller.value = Matrix4.translationValues(
-                            bounds.maxWidth * (.5 - sample.x),
-                            bounds.maxHeight * (.5 - sample.y),
-                            0,
-                          ),
-                    ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: MapControls(
+                  hasTracker: sample != null,
+                  actions: MapActions(
+                    zoom: (delta) {
+                      final value = controller.value;
+                      final previous = value.getMaxScaleOnAxis();
+                      final next = (previous + delta * .35).clamp(1.0, 2.5);
+                      final ratio = next / previous;
+                      final center = Offset(
+                        bounds.maxWidth / 2,
+                        bounds.maxHeight / 2,
+                      );
+                      final translation = value.getTranslation();
+                      controller.value = Matrix4.diagonal3Values(next, next, 1)
+                        ..setTranslationRaw(
+                          center.dx + (translation.x - center.dx) * ratio,
+                          center.dy + (translation.y - center.dy) * ratio,
+                          0,
+                        );
+                    },
+                    recenter: () {
+                      if (sample == null) return;
+                      final scale = controller.value.getMaxScaleOnAxis();
+                      controller.value =
+                          Matrix4.diagonal3Values(scale, scale, 1)
+                            ..setTranslationRaw(
+                              bounds.maxWidth * (.5 - sample.x * scale),
+                              bounds.maxHeight * (.5 - sample.y * scale),
+                              0,
+                            );
+                    },
                   ),
                 ),
+              ),
               if (widget.status == TrackerStatus.loading)
                 Center(
                   child: CircularProgressIndicator(semanticsLabel: s.loading),

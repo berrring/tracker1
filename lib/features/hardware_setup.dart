@@ -196,6 +196,7 @@ class _HardwareSetupScreenState extends State<HardwareSetupScreen> {
       appBar: AppBar(title: Text(s.hardwareTitle)),
       body: SafeArea(
         child: PageList(
+          maxWidth: 680,
           storageKey: ValueKey(step),
           children: [
             SectionHeading(s.hardwareOpen, s.hardwareIntro),
@@ -213,7 +214,26 @@ class _HardwareSetupScreenState extends State<HardwareSetupScreen> {
               ],
             ),
             const SizedBox(height: SafeSpace.sm),
-            LinearProgressIndicator(value: (step + 1) / titles.length),
+            Semantics(
+              label: s.setupStep(step + 1),
+              child: ExcludeSemantics(
+                child: Row(
+                  children: [
+                    for (var index = 0; index < titles.length; index++)
+                      Expanded(
+                        child: Container(
+                          height: 4,
+                          margin: const EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: index <= step ? primary : line,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: SafeSpace.lg),
             Panel(
               child: Column(

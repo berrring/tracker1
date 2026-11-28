@@ -353,12 +353,6 @@ abstract class AppLocalizations {
   /// **'Нет данных'**
   String get unknown;
 
-  /// No description provided for @mapLegend.
-  ///
-  /// In ru, this message translates to:
-  /// **'Демонстрационная карта'**
-  String get mapLegend;
-
   /// No description provided for @park.
   ///
   /// In ru, this message translates to:
@@ -1306,6 +1300,66 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'{number} мВ'**
   String setupMillivolts(int number);
+
+  /// No description provided for @mapZoomIn.
+  ///
+  /// In ru, this message translates to:
+  /// **'Увеличить масштаб'**
+  String get mapZoomIn;
+
+  /// No description provided for @mapZoomOut.
+  ///
+  /// In ru, this message translates to:
+  /// **'Уменьшить масштаб'**
+  String get mapZoomOut;
+
+  /// No description provided for @mapLedger.
+  ///
+  /// In ru, this message translates to:
+  /// **'Схема демо-карты'**
+  String get mapLedger;
+
+  /// No description provided for @mapLegend.
+  ///
+  /// In ru, this message translates to:
+  /// **'Демо-позиция · Бишкек'**
+  String get mapLegend;
+
+  /// No description provided for @mapDemoDetails.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вымышленная точка. Живая геопозиция недоступна.'**
+  String get mapDemoDetails;
+
+  /// No description provided for @timelineSos.
+  ///
+  /// In ru, this message translates to:
+  /// **'Детали события SOS'**
+  String get timelineSos;
+
+  /// No description provided for @profileAccess.
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к геопозиции'**
+  String get profileAccess;
+
+  /// No description provided for @mapServiceUnavailable.
+  ///
+  /// In ru, this message translates to:
+  /// **'Картографический сервис недоступен. Показана демо-схема.'**
+  String get mapServiceUnavailable;
+
+  /// No description provided for @deviceOverview.
+  ///
+  /// In ru, this message translates to:
+  /// **'Обзор устройства'**
+  String get deviceOverview;
+
+  /// No description provided for @demoControls.
+  ///
+  /// In ru, this message translates to:
+  /// **'Управление демо'**
+  String get demoControls;
 }
 
 class _AppLocalizationsDelegate

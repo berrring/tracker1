@@ -20,7 +20,7 @@ For a browser demo, run `flutter run -d chrome`. The production bundle in `publi
 
 ## Demonstrate the prototype
 
-- **Карта** shows the last recorded position, timestamp, accuracy radius, charge and connection. Pan or zoom the fictional map and tap the crosshair to recenter.
+- **Карта** shows the last recorded position, timestamp, accuracy radius, charge and connection. Pan or zoom the map and tap the crosshair to recenter on the fictional last-known position. See [MAP_PROVIDER.md](MAP_PROVIDER.md) for the basemap providers, licensing and configuration.
 - **События** lists a small set of fictional safety events. Confirming a demo SOS adds a local event.
 - **Семья** shows the owner, an invited trusted adult and the tracker wearer. Tap **Добавить устройство**, enter **DEMO-042**, review the access for each person and explicitly confirm.
 - **Устройство → Демо-сценарий** switches among fresh, stale, offline, low battery, SOS, loading, empty, unavailable and error. The selected scenario is shared by the screens.

@@ -1,3 +1,13 @@
+# Checkpoint 05 — SafeTrack dashboard redesign
+
+- Implemented Inter and the route mark, desktop navigation and dashboard, mobile map-first flow, chronological events, SOS details, family permissions and compact device and USB screens.
+- Added the shared map controls and provider selection. Web uses 2GIS when configured, MapLibre otherwise. Android and iOS use MapLibre.
+- The supplied mobile SDK key remains outside the source and deployment bundle. A browser MapGL key is still needed for a live 2GIS test. See [MAP_PROVIDER.md](MAP_PROVIDER.md).
+- Recorded the reported header installation. IO13 and IO14 share the camera interface and remain unassigned. Firmware files are unchanged.
+- Chromium preview rendered OpenFreeMap tiles and attribution and exercised zoom and recenter. Inspected map, events, SOS details, family profiles, pairing, device controls and the disconnected USB wizard at 390, 820 and 1440 px widths.
+- Flutter analysis, 22 widget and unit tests, and three MapGL adapter tests passed during development. The final release is pending a rebuild after visual fixes. The Android build is being retried with built-in Kotlin enabled for MapLibre.
+- Next: verify native build output, audit the final public/ bundle, advance main and confirm that the Vercel production bundle matches the Git commit.
+
 # Checkpoint 04 — slide SOS and setup wizard
 
 ## Completed

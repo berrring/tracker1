@@ -42,7 +42,6 @@
   "offlineAgo": "12 min ago",
   "lastContact": "Last contact",
   "unknown": "No data",
-  "mapLegend": "Demo map",
   "park": "Leaf Garden",
   "square": "Beacon Square",
   "river": "Ribbon River",
@@ -200,5 +199,15 @@
   "demoEventTime": "Demo history",
   "demoDeviceNotice": "USB for board setup and diagnostics. The readings below are simulated.",
   "setupStep": "Step {number} of 8",
-  "setupMillivolts": "{number} mV"
+  "setupMillivolts": "{number} mV",
+  "mapZoomIn": "Zoom in",
+  "mapZoomOut": "Zoom out",
+  "mapLedger": "Illustrated demo map",
+  "mapLegend": "Demo position · Bishkek",
+  "mapDemoDetails": "Fictional demo position. No live location data.",
+  "timelineSos": "SOS event details",
+  "profileAccess": "Location-sharing permissions",
+  "mapServiceUnavailable": "Map service unavailable. Showing the illustrated demo.",
+  "deviceOverview": "Device overview",
+  "demoControls": "Demo controls"
 }

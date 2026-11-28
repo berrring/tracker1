@@ -1,14 +1,14 @@
 import 'package:material_ui/material_ui.dart';
 
-const primary = Color(0xff315c50);
-const primaryContainer = Color(0xffdcebe5);
+const primary = Color(0xff17493b);
+const primaryContainer = Color(0xffdfede5);
 const onPrimary = Color(0xffffffff);
-const ink = Color(0xff18201d);
-const muted = Color(0xff66716c);
-const background = Color(0xfff7f9f8);
+const ink = Color(0xff142420);
+const muted = Color(0xff505f59);
+const background = Color(0xfff3f5f1);
 const surface = Color(0xffffffff);
 const surfaceVariant = Color(0xffeef2f0);
-const line = Color(0xffd9e0dd);
+const line = Color(0xffdce4dd);
 const success = Color(0xff287a55);
 const warning = Color(0xffb56c12);
 const danger = Color(0xffc83c3c);
@@ -26,15 +26,17 @@ abstract final class SafeSpace {
 
 abstract final class SafeRadius {
   static const small = 12.0;
-  static const control = 16.0;
-  static const card = 20.0;
-  static const map = 24.0;
-  static const sheet = 28.0;
+  static const control = 10.0;
+  static const card = 14.0;
+  static const map = 16.0;
+  static const sheet = 20.0;
   static const pill = 100.0;
 }
 
 abstract final class SafeLayout {
   static const contentWidth = 560.0;
+  static const desktopBreakpoint = 960.0;
+  static const sidebarWidth = 248.0;
   static const pageInset = SafeSpace.lg;
   static const touchTarget = 48.0;
 }
@@ -65,6 +67,7 @@ ThemeData familyTheme() {
   const minimum = Size.square(SafeLayout.touchTarget);
   final base = ThemeData(
     useMaterial3: true,
+    fontFamily: 'Inter',
     materialTapTargetSize: MaterialTapTargetSize.padded,
     visualDensity: VisualDensity.standard,
     colorScheme: ColorScheme.fromSeed(seedColor: primary).copyWith(
@@ -86,6 +89,7 @@ ThemeData familyTheme() {
       scrolledUnderElevation: 0,
     ),
     navigationBarTheme: const NavigationBarThemeData(
+      height: 70,
       backgroundColor: surface,
       indicatorColor: primaryContainer,
       elevation: 0,
@@ -127,6 +131,9 @@ ThemeData familyTheme() {
     ),
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(minimumSize: minimum),
+    ),
+    tooltipTheme: const TooltipThemeData(
+      waitDuration: Duration(milliseconds: 600),
     ),
     inputDecorationTheme: const InputDecorationThemeData(
       border: OutlineInputBorder(

@@ -22,15 +22,47 @@ Finder nav(String label) =>
 
 void main() {
   testWidgets('wide screens leave room for the app title', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(1280, 720));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1280, 720);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(const SafeTrackApp());
     await tester.pumpAndSettle();
     expect(
       tester.getSize(find.text('SafeTrack Family')).width,
       greaterThan(160),
     );
-    expect(tester.getSize(find.byType(NavigationBar)).width, 560);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('desktop-sidebar'))).width,
+      248,
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('dashboard-map'))).width,
+      greaterThan(600),
+    );
+  });
+
+  testWidgets('family and SOS details clarify sharing and simulation', (
+    tester,
+  ) async {
+    final repo = MockTrackerRepository();
+    await openApp(tester, repo);
+    await tap(tester, nav('Семья'));
+    await tap(tester, find.text('Тимур'));
+    expect(find.text('Доступ к геопозиции'), findsOneWidget);
+    expect(find.textContaining('После принятия приглашения'), findsOneWidget);
+    await tap(tester, find.text('Закрыть'));
+
+    await tap(tester, nav('События'));
+    await tester.scrollUntilVisible(
+      find.text('Тестовый SOS подтверждён'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tap(tester, find.text('Тестовый SOS подтверждён'));
+    expect(find.text('Детали события SOS'), findsOneWidget);
+    expect(find.textContaining('демонстрационный сценарий'), findsOneWidget);
   });
 
   testWidgets('system back returns to the map before leaving the shell', (

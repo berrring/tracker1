@@ -15,6 +15,7 @@ The exact **physical PCB revision and installed modem firmware** are unverified.
 | RGB | GPIO38 | Disabled in the locked profile |
 | V2 MAX17048 | SDA GPIO15, SCL GPIO16 | Read-only checks in the separately selected V2 profile |
 | Proposed SOS slide | GPIO7 is camera data Y2 | GPIO7 is rejected and the slide pin remains unassigned |
+| Installed headers (reported) | GND, 5V, IO13 and IO14 | IO13 and IO14 are candidates only. Both are shared with the camera interface. The SOS input remains unassigned pending physical verification. |
 
 The documented GPIO mappings are reference assignments. Have a qualified adult verify the actual revision and a free, suitable input for the external switch with USB and battery power disconnected before proceeding. [Waveshare V2.0 schematic](https://files.waveshare.com/wiki/ESP32-S3-A7670E-4G/manual/ESP32-S3-A-SIM7670X-4G%20V2.0.pdf) · [Waveshare Arduino camera and gauge examples](https://docs.waveshare.com/ESP32-S3-A7670E-4G/Arduino)
 

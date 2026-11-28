@@ -2,4 +2,4 @@ import 'package:material_ui/material_ui.dart';
 
 import 'app/app.dart';
 
-void main() => runApp(const SafeTrackApp());
+void main() => runApp(const SafeTrackApp(interactiveMaps: true));

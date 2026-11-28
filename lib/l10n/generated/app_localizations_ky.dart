@@ -138,9 +138,6 @@ class AppLocalizationsKy extends AppLocalizations {
   String get unknown => 'Нет данных';
 
   @override
-  String get mapLegend => 'Демонстрационная карта';
-
-  @override
   String get park => 'Сад Листьев';
 
   @override
@@ -659,4 +656,36 @@ class AppLocalizationsKy extends AppLocalizations {
   String setupMillivolts(int number) {
     return '$number мВ';
   }
+
+  @override
+  String get mapZoomIn => 'Увеличить масштаб';
+
+  @override
+  String get mapZoomOut => 'Уменьшить масштаб';
+
+  @override
+  String get mapLedger => 'Схема демо-карты';
+
+  @override
+  String get mapLegend => 'Демо-позиция · Бишкек';
+
+  @override
+  String get mapDemoDetails =>
+      'Вымышленная точка. Живая геопозиция недоступна.';
+
+  @override
+  String get timelineSos => 'Детали события SOS';
+
+  @override
+  String get profileAccess => 'Доступ к геопозиции';
+
+  @override
+  String get mapServiceUnavailable =>
+      'Картографический сервис недоступен. Показана демо-схема.';
+
+  @override
+  String get deviceOverview => 'Обзор устройства';
+
+  @override
+  String get demoControls => 'Управление демо';
 }

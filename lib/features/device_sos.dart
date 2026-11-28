@@ -15,166 +15,201 @@ class DeviceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     final status = repo.status;
-    return PageList(
-      storageKey: const PageStorageKey('device'),
-      children: [
-        Panel(
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.usb),
-            title: Text(s.hardwareTitle),
-            subtitle: Text(s.demoDeviceNotice),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.pushNamed(context, '/hardware'),
-          ),
-        ),
-        const SizedBox(height: SafeSpace.md),
+    final preferences = <Widget>[
+      if (repo.hasTracker) ...[
         Panel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButtonFormField<TrackerStatus>(
-                key: ValueKey(status),
-                initialValue: status,
-                isExpanded: true,
-                itemHeight: null,
-                borderRadius: BorderRadius.circular(SafeRadius.control),
-                icon: const Icon(SafeIcons.expand),
-                decoration: InputDecoration(labelText: s.state),
-                items: [
-                  for (final item in TrackerStatus.values)
-                    DropdownMenuItem(
-                      value: item,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: SafeLayout.touchTarget,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(item.title(s)),
-                        ),
-                      ),
-                    ),
-                ],
-                selectedItemBuilder: (context) => [
-                  for (final item in TrackerStatus.values)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        item.title(s),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                ],
-                onChanged: (value) {
-                  if (value != null) repo.select(value);
-                },
+              Text(s.preferences, style: context.type.titleLarge),
+              Text(kIsWeb ? s.notifyDetailWeb : s.notifyDetail),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: Text(s.notifyBattery),
+                value: repo.notifyBattery,
+                onChanged: (value) => repo.changePreferences(battery: value),
               ),
-              const SizedBox(height: SafeSpace.sm),
-              Semantics(container: true, child: Text(s.stateHelp)),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: Text(s.notifyNetwork),
+                value: repo.notifyNetwork,
+                onChanged: (value) => repo.changePreferences(network: value),
+              ),
             ],
           ),
         ),
         const SizedBox(height: SafeSpace.md),
-        if (repo.hasDeviceData) ...[
-          FilledButton.tonalIcon(
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (_) => SosDialog(repo: repo),
-            ),
-            icon: const Icon(SafeIcons.sos),
-            label: Text(s.sos),
-          ),
-          const SizedBox(height: SafeSpace.md),
-          Panel(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: SafeSpace.sm,
-                  runSpacing: SafeSpace.xs,
-                  children: [
-                    StatusTag(status),
-                    Tag(s.demoSource, SafeIcons.demo),
-                  ],
-                ),
-                const SizedBox(height: SafeSpace.sm),
-                Text(s.tracker, style: context.type.headlineMedium),
-                const SizedBox(height: SafeSpace.xs),
-                Text(status.detail(s)),
-                const SizedBox(height: SafeSpace.lg),
-                Metric(Icons.tag, s.id, MockTrackerRepository.trackerId),
-                const Divider(height: 24),
-                MetricGrid(
-                  metrics: [
-                    Metric(
-                      status == TrackerStatus.lowBattery
-                          ? SafeIcons.batteryAlert
-                          : SafeIcons.battery,
-                      s.battery,
-                      '${repo.battery}%',
-                    ),
-                    Metric(
-                      repo.isOffline
-                          ? Icons.cloud_off_outlined
-                          : SafeIcons.network,
-                      s.network,
-                      networkLabel(s, repo),
-                    ),
-                    Metric(SafeIcons.time, s.lastContact, lastContact(s, repo)),
-                    Metric(Icons.memory_outlined, s.firmware, s.firmwareValue),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: SafeSpace.md),
-        ] else ...[
-          StatusPanel(
-            status,
-            action: switch (status) {
-              TrackerStatus.empty => FilledButton.icon(
-                onPressed: onPair,
-                icon: const Icon(SafeIcons.addTracker),
-                label: Text(s.add),
+        OutlinedButton.icon(
+          onPressed: () => _remove(context),
+          icon: const Icon(SafeIcons.removeTracker),
+          label: Text(s.remove),
+        ),
+      ],
+    ];
+    final device = <Widget>[
+      if (repo.hasDeviceData) ...[
+        Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: SafeSpace.sm,
+                runSpacing: SafeSpace.xs,
+                children: [StatusTag(status)],
               ),
-              TrackerStatus.error => OutlinedButton(
-                onPressed: () => repo.select(TrackerStatus.fresh),
-                child: Text(s.retry),
+              const SizedBox(height: SafeSpace.sm),
+              Text(s.tracker, style: context.type.headlineMedium),
+              const SizedBox(height: SafeSpace.xs),
+              Text(status.detail(s)),
+              const SizedBox(height: SafeSpace.lg),
+              Metric(Icons.tag, s.id, MockTrackerRepository.trackerId),
+              const Divider(height: 24),
+              MetricGrid(
+                metrics: [
+                  Metric(
+                    status == TrackerStatus.lowBattery
+                        ? SafeIcons.batteryAlert
+                        : SafeIcons.battery,
+                    s.battery,
+                    '${repo.battery}%',
+                  ),
+                  Metric(
+                    repo.isOffline
+                        ? Icons.cloud_off_outlined
+                        : SafeIcons.network,
+                    s.network,
+                    networkLabel(s, repo),
+                  ),
+                  Metric(SafeIcons.time, s.lastContact, lastContact(s, repo)),
+                  Metric(Icons.memory_outlined, s.firmware, s.firmwareValue),
+                ],
               ),
-              _ => null,
+            ],
+          ),
+        ),
+        const SizedBox(height: SafeSpace.md),
+      ] else ...[
+        StatusPanel(
+          status,
+          action: switch (status) {
+            TrackerStatus.empty => FilledButton.icon(
+              onPressed: onPair,
+              icon: const Icon(SafeIcons.addTracker),
+              label: Text(s.add),
+            ),
+            TrackerStatus.error => OutlinedButton(
+              onPressed: () => repo.select(TrackerStatus.fresh),
+              child: Text(s.retry),
+            ),
+            _ => null,
+          },
+        ),
+        const SizedBox(height: SafeSpace.md),
+      ],
+    ];
+    final physical = Panel(
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: const Icon(Icons.usb),
+        title: Text(s.hardwareTitle),
+        subtitle: Text(s.demoDeviceNotice),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => Navigator.pushNamed(context, '/hardware'),
+      ),
+    );
+    final demo = Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(s.demoControls, style: context.type.titleLarge),
+          const SizedBox(height: SafeSpace.md),
+          DropdownButtonFormField<TrackerStatus>(
+            key: ValueKey(status),
+            initialValue: status,
+            isExpanded: true,
+            itemHeight: null,
+            borderRadius: BorderRadius.circular(SafeRadius.control),
+            icon: const Icon(SafeIcons.expand),
+            decoration: InputDecoration(labelText: s.state),
+            items: [
+              for (final item in TrackerStatus.values)
+                DropdownMenuItem(
+                  value: item,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: SafeLayout.touchTarget,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(item.title(s)),
+                    ),
+                  ),
+                ),
+            ],
+            selectedItemBuilder: (context) => [
+              for (final item in TrackerStatus.values)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(item.title(s), overflow: TextOverflow.ellipsis),
+                ),
+            ],
+            onChanged: (value) {
+              if (value != null) repo.select(value);
             },
           ),
-          const SizedBox(height: SafeSpace.md),
-        ],
-        if (repo.hasTracker) ...[
-          Panel(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(s.preferences, style: context.type.titleLarge),
-                Text(kIsWeb ? s.notifyDetailWeb : s.notifyDetail),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(s.notifyBattery),
-                  value: repo.notifyBattery,
-                  onChanged: (value) => repo.changePreferences(battery: value),
-                ),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(s.notifyNetwork),
-                  value: repo.notifyNetwork,
-                  onChanged: (value) => repo.changePreferences(network: value),
-                ),
-              ],
+          if (repo.hasDeviceData) ...[
+            const SizedBox(height: SafeSpace.md),
+            FilledButton.tonalIcon(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => SosDialog(repo: repo),
+              ),
+              icon: const Icon(SafeIcons.sos),
+              label: Text(s.sos),
             ),
-          ),
+          ],
+        ],
+      ),
+    );
+    final wide =
+        MediaQuery.sizeOf(context).width >= SafeLayout.desktopBreakpoint;
+    return PageList(
+      storageKey: const PageStorageKey('device'),
+      maxWidth: 1060,
+      inset: wide ? SafeSpace.xl : SafeSpace.lg,
+      children: [
+        SectionHeading(s.deviceOverview, ''),
+        if (wide)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [...device, ...preferences],
+                ),
+              ),
+              const SizedBox(width: SafeSpace.lg),
+              SizedBox(
+                width: 310,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    physical,
+                    const SizedBox(height: SafeSpace.md),
+                    demo,
+                  ],
+                ),
+              ),
+            ],
+          )
+        else ...[
+          physical,
           const SizedBox(height: SafeSpace.md),
-          OutlinedButton.icon(
-            onPressed: () => _remove(context),
-            icon: const Icon(SafeIcons.removeTracker),
-            label: Text(s.remove),
-          ),
+          demo,
+          const SizedBox(height: SafeSpace.md),
+          ...device,
+          ...preferences,
         ],
       ],
     );
@@ -285,7 +320,13 @@ class _SosDialogState extends State<SosDialog> {
           child: Text(s.close),
         ),
         if (phase == SosDemoState.ready)
-          FilledButton(onPressed: start, child: Text(s.startSos)),
+          FilledButton(
+            onPressed: start,
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: SafeSpace.md),
+            ),
+            child: Text(s.startSos, textAlign: TextAlign.center),
+          ),
       ],
     );
   }

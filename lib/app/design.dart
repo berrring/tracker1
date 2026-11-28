@@ -221,22 +221,25 @@ class Metric extends StatelessWidget {
 }
 
 class PageList extends StatelessWidget {
-  const PageList({super.key, required this.children, this.storageKey});
+  const PageList({
+    super.key,
+    required this.children,
+    this.storageKey,
+    this.maxWidth = SafeLayout.contentWidth,
+    this.inset = SafeLayout.pageInset,
+  });
   final List<Widget> children;
   final Key? storageKey;
+  final double maxWidth;
+  final double inset;
 
   @override
   Widget build(BuildContext context) => Center(
     child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: SafeLayout.contentWidth),
+      constraints: BoxConstraints(maxWidth: maxWidth),
       child: ListView(
         key: storageKey,
-        padding: const EdgeInsets.fromLTRB(
-          SafeLayout.pageInset,
-          SafeSpace.sm,
-          SafeLayout.pageInset,
-          SafeSpace.xl,
-        ),
+        padding: EdgeInsets.fromLTRB(inset, SafeSpace.md, inset, SafeSpace.xl),
         children: children,
       ),
     ),
@@ -282,8 +285,10 @@ class SectionHeading extends StatelessWidget {
         header: true,
         child: Text(title, style: context.type.headlineSmall),
       ),
-      const SizedBox(height: SafeSpace.xs),
-      Text(description),
+      if (description.isNotEmpty) ...[
+        const SizedBox(height: SafeSpace.xs),
+        Text(description),
+      ],
       const SizedBox(height: SafeSpace.lg),
     ],
   );

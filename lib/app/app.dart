@@ -7,11 +7,17 @@ import '../features/family_events.dart';
 import '../features/hardware_setup.dart';
 import '../features/map_screen.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'brand_mark.dart';
 import 'design.dart';
 
 class SafeTrackApp extends StatefulWidget {
-  const SafeTrackApp({super.key, this.repository});
+  const SafeTrackApp({
+    super.key,
+    this.repository,
+    this.interactiveMaps = false,
+  });
   final MockTrackerRepository? repository;
+  final bool interactiveMaps;
 
   @override
   State<SafeTrackApp> createState() => _SafeTrackAppState();
@@ -45,6 +51,7 @@ class _SafeTrackAppState extends State<SafeTrackApp> {
     supportedLocales: AppLocalizations.supportedLocales,
     routes: {'/hardware': (_) => const HardwareSetupScreen()},
     home: _Shell(
+      interactiveMaps: widget.interactiveMaps,
       repo: repo,
       locale: locale,
       setLocale: (value) {
@@ -58,10 +65,12 @@ class _SafeTrackAppState extends State<SafeTrackApp> {
 class _Shell extends StatefulWidget {
   const _Shell({
     required this.repo,
+    required this.interactiveMaps,
     required this.locale,
     required this.setLocale,
   });
   final MockTrackerRepository repo;
+  final bool interactiveMaps;
   final Locale locale;
   final ValueChanged<Locale> setLocale;
 
@@ -88,134 +97,169 @@ class _ShellState extends State<_Shell> {
     final s = context.strings;
     final repo = widget.repo;
     final labels = [s.map, s.events, s.family, s.device];
+    const icons = [
+      Icons.map_outlined,
+      Icons.notifications_none_rounded,
+      Icons.people_outline_rounded,
+      SafeIcons.tracker,
+    ];
+    final wide =
+        MediaQuery.sizeOf(context).width >= SafeLayout.desktopBreakpoint;
+    final screen = ListenableBuilder(
+      listenable: repo,
+      builder: (context, _) => switch (tab) {
+        0 => MapScreen(
+          repo: repo,
+          onPair: pair,
+          interactiveMaps: widget.interactiveMaps,
+          onOpenDevice: () => setState(() => tab = 3),
+        ),
+        1 => EventsScreen(repo: repo),
+        2 => FamilyScreen(onPair: pair),
+        _ => DeviceScreen(repo: repo, onPair: pair),
+      },
+    );
+    final localeMenu = PopupMenuButton<Locale>(
+      tooltip: s.language,
+      initialValue: widget.locale,
+      onSelected: widget.setLocale,
+      icon: const Icon(SafeIcons.language),
+      itemBuilder: (_) => [
+        PopupMenuItem(value: const Locale('ru'), child: Text(s.russian)),
+        PopupMenuItem(value: const Locale('en'), child: Text(s.english)),
+        PopupMenuItem(value: const Locale('ky'), child: Text(s.kyrgyz)),
+      ],
+    );
     return PopScope(
       canPop: tab == 0,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && tab != 0) setState(() => tab = 0);
       },
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          titleSpacing: 0,
-          excludeHeaderSemantics: true,
-          title: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: SafeLayout.contentWidth,
-              ),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(
-                  start: SafeLayout.pageInset,
-                ),
-                child: Row(
+        appBar: wide
+            ? null
+            : AppBar(
+                automaticallyImplyLeading: false,
+                titleSpacing: SafeSpace.lg,
+                excludeHeaderSemantics: true,
+                title: Row(
                   children: [
-                    Container(
-                      height: 36,
-                      width: 36,
-                      decoration: BoxDecoration(
-                        color: primary,
-                        borderRadius: BorderRadius.circular(SafeRadius.small),
-                      ),
-                      child: const Icon(
-                        SafeIcons.brand,
-                        color: onPrimary,
-                        size: 23,
-                      ),
-                    ),
+                    const BrandMark(size: 34),
                     const SizedBox(width: SafeSpace.sm),
                     Expanded(
-                      child: Semantics(
-                        header: true,
-                        container: true,
-                        child: Text(
-                          tab == 0 ? s.appName : labels[tab],
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.type.headlineSmall?.copyWith(
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: SafeSpace.xs),
-                    Tag(s.demo, SafeIcons.demo),
-                    PopupMenuButton<Locale>(
-                      tooltip: s.language,
-                      initialValue: widget.locale,
-                      onSelected: widget.setLocale,
-                      icon: const Icon(SafeIcons.language),
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: const Locale('ru'),
-                          child: Text(s.russian),
-                        ),
-                        PopupMenuItem(
-                          value: const Locale('en'),
-                          child: Text(s.english),
-                        ),
-                        PopupMenuItem(
-                          value: const Locale('ky'),
-                          child: Text(s.kyrgyz),
-                        ),
-                      ],
+                      child: _ShellTitle(tab == 0 ? s.appName : labels[tab]),
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-        ),
-        body: SafeArea(
-          top: false,
-          bottom: false,
-          child: ListenableBuilder(
-            listenable: repo,
-            builder: (context, _) => switch (tab) {
-              0 => MapScreen(repo: repo, onPair: pair),
-              1 => EventsScreen(repo: repo),
-              2 => FamilyScreen(onPair: pair),
-              _ => DeviceScreen(repo: repo, onPair: pair),
-            },
-          ),
-        ),
-        bottomNavigationBar: ColoredBox(
-          color: surface,
-          child: Center(
-            heightFactor: 1,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: SafeLayout.contentWidth,
-              ),
-              child: NavigationBar(
-                selectedIndex: tab,
-                onDestinationSelected: (value) => setState(() => tab = value),
-                destinations: [
-                  NavigationDestination(
-                    icon: const Icon(Icons.map_outlined),
-                    selectedIcon: const Icon(Icons.map),
-                    label: labels[0],
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.notifications_none),
-                    selectedIcon: const Icon(Icons.notifications),
-                    label: labels[1],
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.people_outline),
-                    selectedIcon: const Icon(Icons.people),
-                    label: labels[2],
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(SafeIcons.tracker),
-                    selectedIcon: const Icon(Icons.watch),
-                    label: labels[3],
-                  ),
+                actions: [
+                  localeMenu,
+                  const SizedBox(width: SafeSpace.sm),
                 ],
               ),
-            ),
-          ),
-        ),
+        body: wide
+            ? SafeArea(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      key: const ValueKey('desktop-sidebar'),
+                      width: SafeLayout.sidebarWidth,
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          color: surface,
+                          border: BorderDirectional(
+                            end: BorderSide(color: line),
+                          ),
+                        ),
+                        child: ListView(
+                          padding: const EdgeInsets.all(SafeSpace.lg),
+                          children: [
+                            const SizedBox(height: SafeSpace.sm),
+                            Row(
+                              children: [
+                                const BrandMark(),
+                                const SizedBox(width: SafeSpace.sm),
+                                Expanded(child: _ShellTitle(s.appName)),
+                              ],
+                            ),
+                            const SizedBox(height: SafeSpace.xxl),
+                            for (var index = 0; index < labels.length; index++)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: SafeSpace.xs,
+                                ),
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: ListTile(
+                                    selected: index == tab,
+                                    selectedTileColor: primaryContainer,
+                                    selectedColor: primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        SafeRadius.control,
+                                      ),
+                                    ),
+                                    leading: Icon(icons[index]),
+                                    title: Text(labels[index]),
+                                    onTap: () => setState(() => tab = index),
+                                  ),
+                                ),
+                              ),
+                            const Divider(height: SafeSpace.xxl),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    s.demo,
+                                    style: context.type.labelMedium,
+                                  ),
+                                ),
+                                localeMenu,
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(child: screen),
+                  ],
+                ),
+              )
+            : SafeArea(top: false, bottom: false, child: screen),
+        bottomNavigationBar: wide
+            ? null
+            : DecoratedBox(
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: line)),
+                ),
+                child: NavigationBar(
+                  selectedIndex: tab,
+                  onDestinationSelected: (value) => setState(() => tab = value),
+                  destinations: [
+                    for (var index = 0; index < labels.length; index++)
+                      NavigationDestination(
+                        icon: Icon(icons[index]),
+                        label: labels[index],
+                      ),
+                  ],
+                ),
+              ),
       ),
     );
   }
+}
+
+class _ShellTitle extends StatelessWidget {
+  const _ShellTitle(this.title);
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(
+      title,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: context.type.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+    ),
+  );
 }

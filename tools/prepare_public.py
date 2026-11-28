@@ -1,5 +1,6 @@
 """Copy a built Flutter Web release into the Git-tracked Vercel output."""
 from pathlib import Path
+import json
 import shutil
 
 
@@ -15,6 +16,13 @@ def main():
         raise SystemExit("Build and output directories must be under the workspace.")
     if any(path.is_symlink() for path in source.rglob("*")):
         raise SystemExit("Unexpected symlink in Flutter output.")
+    map_config = source / "map-provider.json"
+    if not map_config.is_file() or json.loads(map_config.read_text(encoding="utf-8")) != {"mapglKey": ""}:
+        raise SystemExit("Git deployment requires an empty map provider configuration.")
+    if not (source / "safetrack_map.js").is_file():
+        raise SystemExit("Map provider script is missing from the Flutter build.")
+    if any(path.is_file() and path.suffix.lower() == ".key" for path in source.rglob("*")):
+        raise SystemExit("A key file was found in the Flutter output.")
     if target.exists():
         if not all((target / file).is_file() for file in required):
             raise SystemExit("Existing public/ does not look like a SafeTrack release.")

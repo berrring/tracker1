@@ -138,9 +138,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknown => 'No data';
 
   @override
-  String get mapLegend => 'Demo map';
-
-  @override
   String get park => 'Leaf Garden';
 
   @override
@@ -662,4 +659,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String setupMillivolts(int number) {
     return '$number mV';
   }
+
+  @override
+  String get mapZoomIn => 'Zoom in';
+
+  @override
+  String get mapZoomOut => 'Zoom out';
+
+  @override
+  String get mapLedger => 'Illustrated demo map';
+
+  @override
+  String get mapLegend => 'Demo position · Bishkek';
+
+  @override
+  String get mapDemoDetails =>
+      'Fictional demo position. No live location data.';
+
+  @override
+  String get timelineSos => 'SOS event details';
+
+  @override
+  String get profileAccess => 'Location-sharing permissions';
+
+  @override
+  String get mapServiceUnavailable =>
+      'Map service unavailable. Showing the illustrated demo.';
+
+  @override
+  String get deviceOverview => 'Device overview';
+
+  @override
+  String get demoControls => 'Demo controls';
 }

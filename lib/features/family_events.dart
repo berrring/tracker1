@@ -11,63 +11,99 @@ class FamilyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     final members = [
-      (s.aigul, s.owner, s.ownerAccess, FamilyRole.owner),
-      (s.timur, s.adult, s.adultAccess, FamilyRole.adult),
-      (s.ayan, s.wearer, s.wearerAccess, FamilyRole.wearer),
+      (s.aigul, s.owner, s.ownerAccess, FamilyRole.owner, 'А'),
+      (s.timur, s.adult, s.adultAccess, FamilyRole.adult, 'Т'),
+      (s.ayan, s.wearer, s.wearerAccess, FamilyRole.wearer, 'А'),
     ];
     return PageList(
+      maxWidth: 780,
       storageKey: const PageStorageKey('family'),
       children: [
         SectionHeading(s.access, s.accessIntro),
-        Text(s.demoFamilyNote),
-        const SizedBox(height: SafeSpace.md),
-        for (final (name, role, summary, kind) in members) ...[
-          Panel(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: primaryContainer,
-                      foregroundColor: primary,
-                      child: Icon(switch (kind) {
-                        FamilyRole.owner => Icons.admin_panel_settings_outlined,
-                        FamilyRole.adult => SafeIcons.person,
-                        FamilyRole.wearer => SafeIcons.tracker,
-                      }),
-                    ),
-                    const SizedBox(width: SafeSpace.md),
-                    Expanded(
-                      child: Column(
+        Panel(
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              for (final (index, member) in members.indexed) ...[
+                if (index != 0)
+                  const Divider(height: 1, indent: 64, endIndent: 16),
+                Builder(
+                  builder: (context) {
+                    final (name, role, summary, kind, initial) = member;
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: SafeSpace.lg,
+                        vertical: SafeSpace.sm,
+                      ),
+                      leading: CircleAvatar(
+                        backgroundColor: kind == FamilyRole.adult
+                            ? surfaceVariant
+                            : primaryContainer,
+                        foregroundColor: primary,
+                        child: Text(initial),
+                      ),
+                      title: Text(name, style: context.type.titleLarge),
+                      subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(name, style: context.type.titleLarge),
                           Text(role),
+                          if (kind == FamilyRole.adult)
+                            Text(s.invited, style: context.type.labelMedium),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: SafeSpace.md),
-                Text(summary, style: context.type.bodyLarge),
-                const SizedBox(height: SafeSpace.sm),
-                Tag(
-                  kind == FamilyRole.adult ? s.invited : s.active,
-                  kind == FamilyRole.adult
-                      ? Icons.mail_outline
-                      : SafeIcons.success,
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => showModalBottomSheet<void>(
+                        context: context,
+                        useSafeArea: true,
+                        showDragHandle: true,
+                        isScrollControlled: true,
+                        builder: (context) => SafeArea(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                SectionHeading(name, role),
+                                Text(
+                                  s.profileAccess,
+                                  style: context.type.titleLarge,
+                                ),
+                                const SizedBox(height: SafeSpace.sm),
+                                Text(summary, style: context.type.bodyLarge),
+                                const SizedBox(height: SafeSpace.md),
+                                Text(
+                                  kind == FamilyRole.adult
+                                      ? s.invited
+                                      : s.active,
+                                ),
+                                const SizedBox(height: SafeSpace.md),
+                                OutlinedButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(s.close),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
-            ),
+            ],
           ),
-          const SizedBox(height: SafeSpace.md),
-        ],
-        FilledButton.icon(
-          onPressed: onPair,
-          icon: const Icon(SafeIcons.addTracker),
-          label: Text(s.add),
+        ),
+        const SizedBox(height: SafeSpace.md),
+        Text(s.demoFamilyNote),
+        const SizedBox(height: SafeSpace.lg),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: FilledButton.icon(
+            onPressed: onPair,
+            icon: const Icon(SafeIcons.addTracker),
+            label: Text(s.add),
+          ),
         ),
       ],
     );
@@ -88,7 +124,6 @@ class EventsScreen extends StatelessWidget {
         s.updated,
         s.updatedDetail,
         Icons.location_on_outlined,
-        s.info,
         primary,
       ),
       (
@@ -97,7 +132,6 @@ class EventsScreen extends StatelessWidget {
         s.lost,
         s.lostDetail,
         Icons.cloud_off_outlined,
-        s.attention,
         warning,
       ),
       (
@@ -106,7 +140,6 @@ class EventsScreen extends StatelessWidget {
         s.restored,
         s.restoredDetail,
         SafeIcons.network,
-        s.ok,
         success,
       ),
       (
@@ -115,7 +148,6 @@ class EventsScreen extends StatelessWidget {
         s.chargeEvent,
         s.chargeDetail,
         SafeIcons.batteryAlert,
-        s.attention,
         warning,
       ),
       (
@@ -124,7 +156,6 @@ class EventsScreen extends StatelessWidget {
         s.sosEvent,
         s.sosEventDetail,
         SafeIcons.sos,
-        s.demo,
         danger,
       ),
     ];
@@ -133,6 +164,7 @@ class EventsScreen extends StatelessWidget {
         status != TrackerStatus.empty && status != TrackerStatus.loading;
     return PageList(
       storageKey: const PageStorageKey('events'),
+      maxWidth: 820,
       children: [
         SectionHeading(s.feed, s.feedIntro),
         if (status == TrackerStatus.empty ||
@@ -150,27 +182,43 @@ class EventsScreen extends StatelessWidget {
         if (showSaved) ...[
           Text(s.today, style: context.type.titleLarge),
           const SizedBox(height: SafeSpace.sm),
-          if (repo.sosAcknowledged) ...[
-            _EventCard(
-              s.demoEventTime,
-              s.demoSuccess,
-              s.sosEventDetail,
-              SafeIcons.sos,
-              s.demo,
-              danger,
+          Panel(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                if (repo.sosAcknowledged) ...[
+                  _EventCard(
+                    s.demoEventTime,
+                    s.demoSuccess,
+                    s.sosEventDetail,
+                    SafeIcons.sos,
+                    danger,
+                    isSos: true,
+                  ),
+                  const Divider(height: 1, indent: 62),
+                ],
+                for (final (index, item) in items.indexed)
+                  if (item.$1 != SafetyEvent.sos) ...[
+                    if (index > 0) const Divider(height: 1, indent: 62),
+                    _EventCard(item.$2, item.$3, item.$4, item.$5, item.$6),
+                  ],
+              ],
             ),
-            const SizedBox(height: SafeSpace.sm),
-          ],
-          for (final (event, time, title, detail, icon, severity, color)
-              in items) ...[
-            if (event == SafetyEvent.sos) ...[
-              const SizedBox(height: SafeSpace.sm),
-              Text(s.yesterday, style: context.type.titleLarge),
-              const SizedBox(height: SafeSpace.sm),
-            ],
-            _EventCard(time, title, detail, icon, severity, color),
-            const SizedBox(height: SafeSpace.sm),
-          ],
+          ),
+          const SizedBox(height: SafeSpace.lg),
+          Text(s.yesterday, style: context.type.titleLarge),
+          const SizedBox(height: SafeSpace.sm),
+          Panel(
+            padding: EdgeInsets.zero,
+            child: _EventCard(
+              items.last.$2,
+              items.last.$3,
+              items.last.$4,
+              items.last.$5,
+              items.last.$6,
+              isSos: true,
+            ),
+          ),
         ],
       ],
     );
@@ -183,46 +231,70 @@ class _EventCard extends StatelessWidget {
     this.title,
     this.detail,
     this.icon,
-    this.severity,
-    this.color,
-  );
+    this.color, {
+    this.isSos = false,
+  });
   final String time;
   final String title;
   final String detail;
   final IconData icon;
-  final String severity;
   final Color color;
+  final bool isSos;
 
   @override
-  Widget build(BuildContext context) => Panel(
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CircleAvatar(
-          backgroundColor: color.withValues(alpha: .10),
-          foregroundColor: color,
-          child: Icon(icon, size: 20),
-        ),
-        const SizedBox(width: SafeSpace.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                time,
-                style: context.type.labelMedium?.copyWith(color: muted),
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: SafeSpace.lg,
+        vertical: SafeSpace.xs,
+      ),
+      leading: CircleAvatar(
+        radius: 17,
+        backgroundColor: color.withValues(alpha: .10),
+        foregroundColor: color,
+        child: Icon(icon, size: 19),
+      ),
+      title: Text(
+        title,
+        style: context.type.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(detail),
+      trailing: isSos
+          ? const Icon(Icons.chevron_right_rounded)
+          : Text(time, style: context.type.labelMedium?.copyWith(color: muted)),
+      onTap: isSos
+          ? () => showModalBottomSheet<void>(
+              context: context,
+              showDragHandle: true,
+              useSafeArea: true,
+              isScrollControlled: true,
+              builder: (context) => SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SectionHeading(s.timelineSos, time),
+                      Text(title, style: context.type.titleLarge),
+                      const SizedBox(height: SafeSpace.sm),
+                      Text(detail),
+                      const SizedBox(height: SafeSpace.lg),
+                      DemoNotice(s.sosWarning),
+                      const SizedBox(height: SafeSpace.md),
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(s.close),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              Text(title, style: context.type.titleLarge),
-              const SizedBox(height: SafeSpace.xs),
-              Text(detail),
-              const SizedBox(height: SafeSpace.sm),
-              Tag(severity, icon, accent: color),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
+            )
+          : null,
+    );
+  }
 }
 
 class PairingDialog extends StatefulWidget {

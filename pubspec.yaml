@@ -12,7 +12,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  maplibre_gl: 0.27.0
   material_ui: ^1.1.0
+  web: 1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +24,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/fonts/OFL-Inter.txt
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
