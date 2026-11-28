@@ -8,14 +8,24 @@ Target product: Waveshare ESP32-S3-A7670E-4G with SIMCom A7670. The supplied ske
 
 The exact **physical PCB revision and installed modem firmware** are unverified. Before enabling the profile, inspect the board silkscreen and modem label, match the board to the corresponding schematic, and verify UART, RGB and BOOT assignments. V1 and V2 differ in other peripherals and are not interchangeable board profiles. Leave the default lock in place if any pin or revision is uncertain. [Waveshare product overview](https://docs.waveshare.com/ESP32-S3-A7670E-4G) · [Arduino examples](https://docs.waveshare.com/ESP32-S3-A7670E-4G/Arduino) · [Waveshare revision and DIP-switch notes](https://docs.waveshare.com/ESP32-S3-A7670E-4G/FAQ)
 
+| Function | Vendor/reference assignment | Checkpoint treatment |
+| --- | --- | --- |
+| Modem UART from ESP32 | RX GPIO17, TX GPIO18 at 115200 8N1 | Existing mapping retained behind the profile lock |
+| BOOT | GPIO0, boot strap | Existing physical approval for contact changes and fallback bench test |
+| RGB | GPIO38 | Disabled in the locked profile |
+| V2 MAX17048 | SDA GPIO15, SCL GPIO16 | Read-only checks in the separately selected V2 profile |
+| Proposed SOS slide | GPIO7 is camera data Y2 | GPIO7 is rejected and the slide pin remains unassigned |
+
+The documented GPIO mappings are reference assignments. Have a qualified adult verify the actual revision and a free, suitable input for the external switch with USB and battery power disconnected before proceeding. [Waveshare V2.0 schematic](https://files.waveshare.com/wiki/ESP32-S3-A7670E-4G/manual/ESP32-S3-A-SIM7670X-4G%20V2.0.pdf) · [Waveshare Arduino camera and gauge examples](https://docs.waveshare.com/ESP32-S3-A7670E-4G/Arduino)
+
 ## Local workflow
 
 1. Use a data USB cable and the board's ESP32-S3 UART-to-USB selection. Check the board-specific DIP diagram before applying power. Close Serial Monitor so only one client can access the port.
 2. In desktop Chrome or Edge, open SafeTrack on HTTPS or localhost. Go to **Устройство → Физический трекер**, then choose the ESP32-S3 serial port. The setup screen checks protocol, firmware and board identity.
 3. With the verified board profile enabled, enter the device name and an authorized phone number. Use international format with a plus and 8–15 digits. Review the actual number and confirm consent.
 4. Press and release BOOT on the board within 20 seconds when prompted. A fresh debounced press is required. Contact details are saved on the board in NVS and are not read back by the app.
-5. Run modem/GNSS diagnostics and verify network registration. A first GNSS fix may require a clear sky view and time. A GNSS fix is not required for a test SMS.
-6. Choose **Отправить тестовое SMS**, confirm the test and press BOOT again. Only the fixed test message is sent. The text contains no coordinates or emergency claim. Read the submission result and confirm receipt separately on the authorized phone.
+5. Follow the wizard through SIM, GNSS and battery diagnostics. The device reports GNSS fix status without coordinates. Battery values appear only after a valid read on the verified V2 gauge profile.
+6. Choose **Отправить тестовое SMS** and confirm. With a verified slide input, hold OFF for at least 250 ms after the request, then hold ON for at least 1.5 s within the 20-second window. Otherwise use the existing BOOT approval. Only a fixed bench message can be submitted, once per request. Confirm handset receipt separately.
 7. To clear the number, select **Удалить контакт с платы** and approve on the board again.
 
 If the browser cannot choose a serial port, use the local Python utility. Replace `COM3` with the detected port.
@@ -36,6 +46,8 @@ The utility prompts for the number without echoing it or including it in command
 - Confirm the silkscreen revision, modem part and ESP32 serial endpoint.
 - Check connected, wrong firmware, unplugged, modems without power and expired confirmation.
 - Check that holding BOOT before the request does not approve it.
+- Check that a slide left ON at startup or before a request, contact bounce, short pulses, cancellation and a held ON state cannot cause a duplicate submission. Check OFF-to-ON approval while locally armed.
+- Compare battery readings on an identified V2 board. Check unavailable output when the gauge cannot be read. Treat USB power and gauge data as distinct.
 - Save an authorized test contact, power cycle and check that configuration persists without returning the number.
 - Check modem failure, no SIM or no cellular service, GNSS unavailable and GNSS fix outdoors.
 - Submit one consented test SMS and record modem acceptance and actual handset receipt separately. If submission becomes unknown, do not retry until you have checked the handset and restarted the board.

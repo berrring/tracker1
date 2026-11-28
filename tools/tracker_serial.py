@@ -11,7 +11,7 @@ import serial
 
 BOARD = "ESP32-S3-A7670E-4G"
 PHONE = re.compile(r"\+[1-9][0-9]{7,14}")
-TIMEOUTS = {"STATUS": 5, "DIAG": 16, "SET": 25, "CLEAR": 25, "TEST": 125}
+TIMEOUTS = {"STATUS": 5, "DIAG": 23, "SET": 25, "CLEAR": 25, "TEST": 125}
 
 
 def request(port, command, args=""):
@@ -80,7 +80,10 @@ def main():
                 if action in {"SET", "TEST", "CLEAR"}:
                     if not confirmed():
                         return 1
-                    print("Press BOOT on the connected board within 20 seconds.")
+                    if action == "TEST" and status.get("testInput") == "slide":
+                        print("Within 20 seconds, keep the switch OFF for 250 ms, then ON for 1.5 s.")
+                    else:
+                        print("Press BOOT on the connected board within 20 seconds.")
                 try:
                     response = request(port, action, payload)
                 except (KeyboardInterrupt, TimeoutError):
@@ -91,7 +94,7 @@ def main():
                     raise
             # Keep the number, raw modem replies and user-entered name out of output.
             known = {"status", "saved", "cleared", "sms_accepted", "sms_rejected",
-                     "sms_unknown", "not_registered", "no_modem", "confirm_timeout",
+                     "sms_unknown", "not_registered", "no_modem", "sim_unready", "confirm_timeout",
                      "storage_error", "not_configured", "profile_locked", "invalid",
                      "cancelled", "busy", "timeout"}
             code = response["code"] if response["code"] in known else "invalid_reply"
@@ -99,13 +102,18 @@ def main():
             if code == "sms_accepted":
                 print("Modem accepted the SMS. Recipient delivery is unconfirmed.")
             if code in {"status", "saved", "cleared"}:
-                for field in ("configured", "profile", "firmware", "modem", "network", "gnss"):
+                for field in ("configured", "profile", "firmware", "modem", "sim", "network", "gnss", "testInput"):
                     if field in response:
                         item = response[field]
                         if isinstance(item, bool) or (
                             isinstance(item, str) and re.fullmatch("[a-zA-Z0-9_.-]{1,32}", item)
                         ):
                             print(f"{field}: {item}")
+                for field, minimum, maximum in (("batteryPercent", 0, 100),
+                                                 ("batteryMillivolts", 2500, 4500)):
+                    item = response.get(field)
+                    if type(item) is int and minimum <= item <= maximum:
+                        print(f"{field}: {item}")
             return 0 if code in {"status", "saved", "cleared", "sms_accepted"} else 2
     except (OSError, ValueError, TimeoutError, KeyboardInterrupt):
         if action == "TEST":

@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include <Preferences.h>
+#include <Wire.h>
 #include <cstring>
 #include "board_profile.h"
+#include "switch_approval.h"
 
-constexpr char firmwareVersion[] = "0.3.0-bench";
+constexpr char firmwareVersion[] = "0.4.0-bench";
 constexpr char boardModel[] = "ESP32-S3-A7670E-4G";
 constexpr char testText[] = "SafeTrack bench test. No emergency.";
 constexpr uint32_t approvalWindow = 20000;
@@ -16,6 +18,11 @@ const char *modemState = "not_checked";
 bool submissionUnknown = false;
 const char *network = "not_checked";
 const char *gnss = "not_checked";
+const char *sim = "not_checked";
+int batteryPercent = -1;
+int batteryMillivolts = -1;
+bool gaugeBusReady = false;
+SwitchApproval switchApproval;
 
 enum class Action { none, save, clear, test };
 struct Pending {
@@ -71,9 +78,14 @@ void status(const String &id, const char *code = "status") {
     if (c == '\\' || c == '"') Serial.write('\\');
     Serial.write(c);
   }
-  Serial.printf("\",\"configured\":%s,\"profile\":%s,\"modem\":\"%s\",\"network\":\"%s\",\"gnss\":\"%s\"}\n",
+  Serial.printf("\",\"configured\":%s,\"profile\":%s,\"modem\":\"%s\",\"network\":\"%s\",\"gnss\":\"%s\",\"sim\":\"%s\",\"testInput\":\"%s\",\"batteryPercent\":",
                 contact.isEmpty() ? "false" : "true", profileEnabled ? "true" : "false",
-                profileEnabled ? modemState : "unavailable", network, gnss);
+                profileEnabled ? modemState : "unavailable", network, gnss, sim,
+                !profileEnabled ? "unavailable" : slideEnabled ? "slide" : "boot");
+  if (batteryPercent >= 0) Serial.print(batteryPercent); else Serial.print("null");
+  Serial.print(",\"batteryMillivolts\":");
+  if (batteryMillivolts >= 0) Serial.print(batteryMillivolts); else Serial.print("null");
+  Serial.println('}');
 }
 
 enum class AtEnd { ok, prompt, rejected, timeout };
@@ -156,11 +168,46 @@ bool probeModem() {
   return modemPresent;
 }
 
+bool simReady() {
+  const AtReply reply = command("AT+CPIN?", 2000, "+CPIN:");
+  if (reply.end != AtEnd::ok || reply.data.isEmpty()) {
+    sim = "unavailable";
+    return false;
+  }
+  String state = reply.data.substring(6);
+  state.trim();
+  sim = state == "READY" ? "ready" : "sim_locked";
+  return state == "READY";
+}
+
+bool gaugeRegister(uint8_t address, uint16_t &value) {
+  Wire.beginTransmission(0x36);
+  Wire.write(address);
+  if (Wire.endTransmission(false) != 0 || Wire.requestFrom(0x36, 2) != 2) {
+    return false;
+  }
+  const uint16_t high = Wire.read();
+  value = (high << 8) | Wire.read();
+  return true;
+}
+
+void measureBattery() {
+  batteryPercent = batteryMillivolts = -1;
+  if (!gaugeBusReady) return;
+  uint16_t cell, soc;
+  if (!gaugeRegister(0x02, cell) || !gaugeRegister(0x04, soc)) return;
+  const int millivolts = (uint32_t(cell) * 5 + 32) / 64;
+  if (millivolts < 2500 || millivolts > 4500 || soc > 100 * 256) return;
+  batteryMillivolts = millivolts;
+  batteryPercent = (soc + 128) / 256;
+}
+
 void diagnose(const String &id) {
   if (!profileEnabled) { result(id, "profile_locked"); return; }
   light(0, 0, 20);
+  measureBattery();
   if (!submissionUnknown && probeModem()) {
-    networkReady();
+    if (simReady()) networkReady(); else network = "unavailable";
     if (command("AT+CGNSSPWR=1", 4500).end == AtEnd::ok) {
       const AtReply fix = command("AT+CGNSSINFO", 2000, "+CGNSSINFO:");
       if (fix.end == AtEnd::ok && !fix.data.isEmpty()) {
@@ -170,6 +217,7 @@ void diagnose(const String &id) {
       } else gnss = "unavailable";
     } else gnss = "unavailable";
   } else {
+    sim = "unavailable";
     network = "unavailable";
     gnss = "unavailable";
   }
@@ -180,6 +228,7 @@ void diagnose(const String &id) {
 const char *testSms() {
   if (submissionUnknown) return "sms_unknown";
   if (!probeModem()) return "no_modem";
+  if (!simReady()) return "sim_unready";
   if (!networkReady()) return "not_registered";
   if (command("AT+CMGF=1").end != AtEnd::ok ||
       command("AT+CSCS=\"GSM\"").end != AtEnd::ok) return "sms_rejected";
@@ -203,6 +252,7 @@ const char *testSms() {
 void approve() {
   const Pending approved = pending;
   pending = {};
+  switchApproval.cancel();
   if (approved.action == Action::none) return;
   light(0, 0, 24);
   if (approved.action == Action::test) {
@@ -241,6 +291,7 @@ void handleLine(String line) {
   if (action == "CANCEL") {
     if (pending.action != Action::none) result(pending.id, "cancelled");
     pending = {};
+    switchApproval.cancel();
     light(0, 10, 0);
     return;
   }
@@ -251,6 +302,7 @@ void handleLine(String line) {
   if (action == "TEST") {
     if (contact.isEmpty()) { result(id, "not_configured"); return; }
     pending = {Action::test, id, "", "", millis()};
+    if (slideEnabled) switchApproval.arm(digitalRead(sosPin) == LOW, millis());
   } else if (action == "CLEAR") {
     pending = {Action::clear, id, "", "", millis()};
   } else if (action.startsWith("SET ")) {
@@ -268,6 +320,8 @@ void setup() {
   Serial.begin(baud);
   if (profileEnabled) {
     pinMode(bootButton, INPUT_PULLUP);
+    if (slideEnabled) pinMode(sosPin, INPUT_PULLUP);
+    if (gaugeEnabled) gaugeBusReady = Wire.begin(gaugeSda, gaugeScl);
     lastButton = stableButton = digitalRead(bootButton);
     modem.begin(baud, SERIAL_8N1, modemRx, modemTx);
     storageReady = storage.begin("safetrack", false);
@@ -299,9 +353,12 @@ void loop() {
   if (pending.action != Action::none && millis() - pending.began >= approvalWindow) {
     result(pending.id, "confirm_timeout");
     pending = {};
+    switchApproval.cancel();
     light(0, 10, 0);
   }
   if (profileEnabled) {
+    if (slideEnabled && pending.action == Action::test &&
+        switchApproval.sample(digitalRead(sosPin) == LOW, millis())) approve();
     const bool reading = digitalRead(bootButton);
     if (reading != lastButton) {
       lastButton = reading;
@@ -310,6 +367,7 @@ void loop() {
     if (reading != stableButton && millis() - buttonChange >= 40) {
       stableButton = reading;
       if (stableButton == LOW && pending.action != Action::none &&
+          !(slideEnabled && pending.action == Action::test) &&
           int32_t(buttonChange - pending.began) > 0) approve();
     }
   }
